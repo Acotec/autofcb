@@ -22,25 +22,28 @@
         if(checkRedirection==1){
             window.close()
             window.close()
-            window.close()
-
+        }
+        else{
+            if(document.getElementsByClassName('alert-success').length>0||document.getElementsByClassName('alert-danger').length>0){
+                //clearInterval(inter)
+                window.close()
+                window.close()}
         }
     }
 
-    var close = ()=>{ setInterval(window.close())}
-
-    Nav()
-
+    var run = 0
     var inter= setInterval(()=>{
         try{
-            if(document.getElementsByClassName('alert-success').length>0||document.getElementsByClassName('alert-danger').length>0){
-               clearInterval(inter)
-               close()
-               }
+            run++
+            Nav()
+            if(run>=30){clearInterval(inter)}
         }catch(err){
-         null
-}
-    },)
-    //Nav()
+            Nav()
+            clearInterval(inter)
+            clearInterval(close)
 
-})();
+        }
+    })
+
+
+    })();
