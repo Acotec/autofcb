@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoFCB(Mbutt)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      0.7.8
+// @version      0.7.9
 // @description  Open Remain buttons after Auto(FCB) is run , (optional)
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(Mbutt).user.js
@@ -61,7 +61,7 @@
 
             }
 
-        },5000)
+        },4000)
 
         }
 
