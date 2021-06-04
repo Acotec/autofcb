@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoFCB(Close)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      1.0.1
+// @version      1.0.2
 // @description  Auto closeDone Auto**/
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(Close).user.js
@@ -31,10 +31,15 @@
 
     Nav()
 
-    setInterval(()=>{
+    var inter= setInterval(()=>{
         try{
-            if(document.getElementsByClassName('alert-success').length>0||document.getElementsByClassName('alert-danger').length>0){close()}
-        }catch(err){null}
+            if(document.getElementsByClassName('alert-success').length>0||document.getElementsByClassName('alert-danger').length>0){
+               clearInterval(inter)
+               close()
+               }
+        }catch(err){
+         null
+}
     },)
     //Nav()
 
