@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoFCB(UrlReplace)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      1.2.1
+// @version      1.2.2
 // @description  Auto ReplaceUrl of Shortlink sites
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(UrlReplace).user.js
@@ -48,14 +48,19 @@
             if(h.pathname.includes('demo')){
                 path = h.pathname.replace(/.*\//,'')
                 return ('wplink.online/'+path)
-            }
-            if(h.searchParams.has('link')){
+            }if(h.pathname.includes('wpblog')){
+                return ('wplink.online/'+ h.searchParams.get('link'))
+            }if(h.searchParams.has('link')){
                 return ('cblink.crazyblog.in' + h.searchParams.get('link'))
             }
 
         } else if(url.includes('amazingdarpon.com')&& h.searchParams.has('link')){
             return 'go.zolomix.in/' + h.searchParams.get('link');
+        }else if(url.includes('kiralikarazi.com/?link')&& h.searchParams.has('link')){
+            return 'go.mof.pw/' + h.searchParams.get('link');
         }
+
+
 
     })(new URL(window.location.href))
     if (l) {
