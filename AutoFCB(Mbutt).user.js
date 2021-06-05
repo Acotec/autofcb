@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoFCB(Mbutt)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      0.7.9
+// @version      0.7.10
 // @description  Open Remain buttons after Auto(FCB) is run , (optional)
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(Mbutt).user.js
@@ -14,9 +14,7 @@
 // @require      http://code.jquery.com/jquery-3.5.1.min.js
 // ==/UserScript==
 
-
-
-(function() {
+(function () {
     'use strict';
     // 1. Create the button
     var button = document.createElement("button");
@@ -24,65 +22,75 @@
     var body = document.getElementsByClassName("shortlinks")[0];;
 
     button.innerHTML = "Run Script";
+    var loop
+    var time = GM_getValue("time", GM_getValue("run"))
+    var run = GM_getValue("run")
 
-    function checkButton(){
-        button.innerHTML = "Script Run";
-        // location.reload()
-        ;}
-
-    function runAgain(){
-        //check if it as already been run from/inside Auto***
-        //if it as already been run (then runvalue from GM_getValue will be greater than 1)
-        //then runAgain will run script again and reset it to 0
-        let run = GM_getValue("run")
-        if (run==1){
-            console.log('Script run ',run)
-            GM_setValue("run",0)
-            main()
-        }
+    function runAgain() {
+        console.log('Script run ', run)
+        GM_setValue("run", run + 1)
+        main()
     }
-    function main(){
+
+    function main() {
         let count = 0
-        let run = GM_getValue ("run")
+        let speed = 1000
+        let run = GM_getValue("run")
         let visit = document.querySelector("#visit239 > button")
         let getviews = visit.parentElement.parentElement.getElementsByClassName('info')[0].getElementsByTagName('span')[0].innerText
-        let viewleft = getviews.replace(getviews.match(/\/.*/),'')
+        let viewleft = getviews.replace(getviews.match(/\/.*/), '')
         let viewleftInt = parseInt(viewleft)
-        var inter = setInterval(()=>{
-            //console.log(visit)
-            if(count < viewleftInt && count<50){
-                $(visit)[0].click()
+        loop = 15
+
+        if (viewleftInt < loop) {
+            var interval = setInterval(() => {
+                (visit)[0].click()
                 count++
-            }else{
-                clearInterval(inter)
-                //localStorage.closeTabsEnable = 'yes'
-                window.close()
-                window.top.close()
+                if (count > viewleftInt) {
+                    clearInterval(interval)
+                    GM_setValue('run', 0)
+                    window.close()
+                }
+            }, speed)
+        } else {
+            GM_setValue('time', parseInt(viewleftInt / loop))
+            var inter = setInterval(() => {
+                //console.log(visit)
+                if (count < viewleftInt && count <= loop - 1) {
+                    $(visit)[0].click()
+                    count++
+                } else {
+                    clearInterval(inter)
+                    //console.log(parseInt(time-run))
+                    window.close()
+                    window.top.close()
+                }
 
-            }
-
-        },4000)
+            }, speed)
 
         }
-
+    }
 
     body.appendChild(button);
     // // 3. Add event handler
+    if (run <= time && run != 0) {
+        button.innerHTML = "Script re-Run";
+        runAgain()
+    } else {
+        GM_setValue("run", 0)
+        button.innerHTML = "Done running script";
+    }
 
-    runAgain()
 
-    button.addEventListener ("click", function() {
-        checkButton()
-        let run = GM_getValue("run",0)
-        if (run==0){
-            console.log('Script run from Auto**',run)
-            button.innerHTML ='Script was run from Auto** '+run
-            GM_setValue("run",1)
+    button.addEventListener("click", function () {
+        button.innerHTML = "Script Run";
+        let run = GM_getValue("run")
+        if (run == 0) {
+            console.log('Script run from Auto**', run)
+            button.innerHTML = 'Script was run from Auto** ' + run
+            GM_setValue("run", 1)
             main()
         }
     });
     ////////////////
-
-
-
 })();
