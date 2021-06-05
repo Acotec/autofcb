@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoFCB(Close)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      1.0.3
+// @version      1.0.5
 // @description  Auto closeDone Auto**/
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(Close).user.js
@@ -16,33 +16,18 @@
 
 (function() {
     'use strict';
-
-    function Nav(){
+     var Nav=(()=>{
         var checkRedirection = window.performance.navigation.redirectCount
-        if(document.getElementsByClassName('alert-success').length>0||document.getElementsByClassName('alert-danger').length>0){
+        var redirect = document.referrer.includes('shortlinks/visited/')
+        if(checkRedirection==1||redirect==true){
             window.close()
             window.close()
-
-        }else{
-            if (checkRedirection==1){
-                window.close()
-                window.close()
-            }
         }
-    }
-
-    var run = 0
-    var inter= setInterval(()=>{
-        try{
-            run++
-            Nav()
-            if(run>=30){clearInterval(inter)}
-        }catch(err){
-            Nav()
-            clearInterval(inter)
-
+        else{
+            if(document.getElementsByClassName('alert-success').length>0||document.getElementsByClassName('alert-danger').length>0){
+                window.close()
+                window.close()}
         }
-    })
+    })()
 
-
-    })();
+})();
