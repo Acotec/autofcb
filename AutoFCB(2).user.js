@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoFCB(2)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      2.1.3
+// @version      2.1.4
 // @description  AutomateButtons
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(2).user.js
@@ -16,7 +16,7 @@
 (function () {
     'use strict';
     //Dont click the link in this list
-    var _DontOpen = ['LootLinks', 'bestshort', 'SkipAz','Coin']
+    var _DontOpen = ['LootLinks', 'bestshort', 'SkipAz', 'try2link']
     var _open_link_fast = []
     var _alreadyRun = GM_getValue("_alreadyRun")
     var _available_link = parseInt(document.getElementsByClassName('amount')[1].textContent)
@@ -31,7 +31,7 @@
     var i = 0; //index (for looping purpose)
     var interval; //for setInterval
     var duration; //for setInterval duration
-    var multiplier = 100; //the duration multiplier
+    var multiplier = GM_getValue('multiplier',1500); //the duration multiplier
 
     // 1. Create the button
     var button = document.createElement("button");
@@ -165,11 +165,8 @@
     function appear() { //define a function
         let limit = _ordered_LinkToVisitOnPage.length
         // if(limit>30){limit = 30 //_available_link}; i += 1; //increment the index ; duration = i*multiplier ; console.log('First',duration)
-        // i ++; //increment the index
-        // //console.log(i)
-        // duration = i* multiplier
         interval = setInterval(() => {
-
+            // console.log(i)
             try {
                 let _getlink = _ordered_LinkToVisitOnPage.splice(0, 1)[0],
                     open_link = _getlink.parentNode.parentNode.parentNode.querySelector("button"),
@@ -181,28 +178,42 @@
                     let exFirstNum = _getlink.match(/\/\d*/)[0],
                         first_number = _getlink.replace(exFirstNum, "");
                     if (DontOpen_LinkByName(open_link)) {
-                        // console.log('Shortlink Among Dont Open')
+                        //console.log('Shortlink Among Dont Open')
                         limit++
-                        // console.log('wont ',limit)
+                        //console.log('wont ',limit)
                     } else {
+                        if (first_number == 1 || lower_open_link_fast.includes(linkName.toLowerCase())) {
+                            i += 100
+                            duration = 100 + i //duration
+                            //console.log('duration reset ',duration)
+                            //console.log('Link is open fast -- ',linkName)
 
-                        i++; //increment the index
-                        duration = i * GM_getValue('multiplier')
+                        } else {
 
-                        //console.log(i)
+                            i += 1; //increment the index
+                            duration = i * GM_getValue('multiplier')
 
+                            let value = 9000
+                            if (duration >= value) {
+                                //console.log(duration,'>=',value)
+                                duration = 5000 //duration
+
+                            }
+
+                        }
                         var inter = setInterval(() => {
                             first_number--
                             if (first_number >= 0) {
-                                open_link.click()
+                                // open_link.click()
                                 console.log('a', open_link.parentElement.parentElement.getElementsByClassName('name')[0].innerText.trim())
                                 clearInterval(interval)
                                 appear() // re-run
                             }
                         }, duration)
                     }
-                } else { //if Available link is greater than 1000
+                } else {
                     duration = i * GM_getValue('multiplier')
+
 
                     if (DontOpen_LinkByName(open_link)) {
                         //console.log('Shortlink Among Dont Open')
@@ -217,15 +228,13 @@
                 null
             }
             clearInterval(interval); //clear
-            //console.log(limit)
+            // console.log(limit)
             console.log('duration using is', duration)
-            //alert(duration)
             if (!limit == 0) {
                 appear(); //re-run
             } else {
                 i = 0; //reset
                 //console.log('Done opening')
-                localStorage.canclose = 'yes'
                 button.innerHTML = 'Done opening-Click to Run Again'
                 clearInterval(interval)
                 //Rclick()
