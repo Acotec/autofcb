@@ -16,7 +16,7 @@
 (function () {
     'use strict';
     //Dont click the link in this list
-    var _DontOpen = ['LootLinks', 'bestshort', 'SkipAz', 'try2link']
+    var _DontOpen = ['LootLinks', 'bestshort', 'SkipAz', 'Coin']
     var _open_link_fast = []
     var _alreadyRun = GM_getValue("_alreadyRun")
     var _available_link = parseInt(document.getElementsByClassName('amount')[1].textContent)
@@ -204,8 +204,8 @@
                         var inter = setInterval(() => {
                             first_number--
                             if (first_number >= 0) {
-                                // open_link.click()
-                                console.log('a', open_link.parentElement.parentElement.getElementsByClassName('name')[0].innerText.trim())
+                                open_link.click()
+                                //console.log('a', open_link.parentElement.parentElement.getElementsByClassName('name')[0].innerText.trim())
                                 clearInterval(interval)
                                 appear() // re-run
                             }
@@ -229,7 +229,7 @@
             }
             clearInterval(interval); //clear
             // console.log(limit)
-            console.log('duration using is', duration)
+            //console.log('duration using is', duration)
             if (!limit == 0) {
                 appear(); //re-run
             } else {
@@ -252,7 +252,6 @@
         ViewsOnPage()
         Sort_And_Remove_Duplicate()
         Ordered_LinkToView()
-
         appear();
     }
 
