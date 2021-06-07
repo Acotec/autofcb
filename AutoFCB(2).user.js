@@ -32,13 +32,14 @@
     var s = 10; //index
     var interval; //for setInterval
     var duration; //for setInterval duration
-    var multiplier = 500 //GM_getValue('speed',500)
-    var speed = 1500 //GM_getValue('speed',1500); //the duration speed
-    if (GM_getValue('speed') == null) {
-        GM_setValue('speed', speed)
+    var multiplier = 500//GM_getValue('speed',500)
+    var speed = 1500//GM_getValue('speed',1500); //the duration speed
+    console.log(GM_getValue('speed'))
+    if(GM_getValue('speed')==undefined){
+        GM_setValue('speed',speed)
     }
-    if (GM_getValue('multiplier') == 'null') {
-        GM_setValue(multiplier, multiplier)
+    if(GM_getValue('multiplier')==undefined){
+        GM_setValue('multiplier',multiplier)
     }
 
     // 1. Create the button
@@ -123,15 +124,15 @@
 
     function Sort_And_Remove_Duplicate() {
         let uniq = _num_ofLink_toVisit.map((name) => {
-                return {
-                    count: 1,
-                    name: name
-                }
-            })
-            .reduce((a, b) => {
-                a[b.name] = (a[b.name] || 0) + b.count
-                return a
-            }, {})
+            return {
+                count: 1,
+                name: name
+            }
+        })
+        .reduce((a, b) => {
+            a[b.name] = (a[b.name] || 0) + b.count
+            return a
+        }, {})
 
         let sorted = Object.keys(uniq).sort((a, b) => uniq[a] < uniq[b])
         _sort_and_Re_Dup = sorted
@@ -220,7 +221,7 @@
                                 appear() // re-run
                             }
                         }, duration)
-                    }
+                        }
                 } else {
                     duration = i * GM_getValue('speed')
 
@@ -280,7 +281,7 @@
     mult_sub.innerHTML = 'mult-'
     body1.appendChild(dis1);
 
-    dis.innerHTML = 'DS - ' + GM_getValue('speed', speed) //DS=default Speed
+    dis.innerHTML = 'DS - ' + GM_getValue('speed',speed) //DS=default Speed
     dis1.innerHTML = 'DM - ' + GM_getValue('multiplier', multiplier) //DM=default Speed
     // // 3. Add event handler
     button.addEventListener("click", function () {
