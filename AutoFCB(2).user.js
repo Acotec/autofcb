@@ -34,11 +34,10 @@
     var duration; //for setInterval duration
     var multiplier = 500//GM_getValue('speed',500)
     var speed = 1500//GM_getValue('speed',1500); //the duration speed
-   alert(GM_getValue('speed'))
-    if(GM_getValue('speed')==undefined||GM_getValue('speed')==NaN||GM_getValue('speed')==null){
+    if(String(GM_getValue('speed'))=='undefined'||String(GM_getValue('speed'))=='NaN'||String(GM_getValue('speed'))=='null'){
         GM_setValue('speed',speed)
     }
-    if(GM_getValue('multiplier')==undefined||GM_getValue('multiplier')==NaN||GM_getValue('multiplier')==null){
+    if(String(GM_getValue('multiplier'))=='undefined'||String(GM_getValue('multiplier'))=='NaN'||String(GM_getValue('multiplier'))=='null'){
         GM_setValue('multiplier',multiplier)
     }
 
