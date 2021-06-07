@@ -16,7 +16,7 @@
    var delayOn = ['express-cut','bitlinks','neonlink.net','faucet.100count.net','bitcoinly.in',
                    'kiiw.icu','adbull.me','Linko','Clickit','owllink.net','pingit','cashurl',
                    'adshort','aii.sh','fc.lc','riful']
-    var host= window.location.host.toLowerCase()
+    var host= window.location.host.toLowerCase().replace(/https:\/\/|www\./,'')
     function sleep (seconds) {
         var start = new Date().getTime();
         while (new Date() < start + seconds*1000){};
@@ -24,7 +24,7 @@
     }
     for(const link of delayOn){
         if(host.includes(link.toLowerCase() ) ){
-            sleep(15);
+            sleep(16);
         }
     }
 
