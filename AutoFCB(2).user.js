@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoFCB(2)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      2.1.4
+// @version      2.1.6
 // @description  AutomateButtons
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(2).user.js
@@ -16,7 +16,7 @@
 (function () {
     'use strict';
     //Dont click the link in this list
-    var _DontOpen = ['LootLinks', 'bestshort', 'SkipAz', 'Coin']
+    var _DontOpen = ['LootLinks', 'bestshort', 'SkipAz', 'try2link']
     var _open_link_fast = []
     var _alreadyRun = GM_getValue("_alreadyRun")
     var _available_link = parseInt(document.getElementsByClassName('amount')[1].textContent)
@@ -29,16 +29,26 @@
 
     /* variable for appearFunction */
     var i = 0; //index (for looping purpose)
+    var s = 10; //index
     var interval; //for setInterval
     var duration; //for setInterval duration
-    var multiplier = GM_getValue('multiplier',1500); //the duration multiplier
+    var multiplier = 500 //GM_getValue('speed',500)
+    var speed = 1500 //GM_getValue('speed',1500); //the duration speed
+    if (speed == 'NAN') {
+        GM_setValue('speed', speed)
+    }
+    if (multiplier == 'NAN') {
+        GM_setValue(multiplier, speed)
+    }
 
     // 1. Create the button
     var button = document.createElement("button");
+    var speed_add = document.createElement("button");
+    var speed_sub = document.createElement("button");
     var mult_add = document.createElement("button");
     var mult_sub = document.createElement("button");
     var dis = document.createElement("p");
-
+    var dis1 = document.createElement("p");
     // 2. Append somewhere
     var body = document.getElementsByClassName('col item')[1].getElementsByClassName('content-box')[0]
     var body1 = document.getElementsByClassName('col item')[0].getElementsByClassName('content-box')[0]
@@ -164,7 +174,7 @@
 
     function appear() { //define a function
         let limit = _ordered_LinkToVisitOnPage.length
-        // if(limit>30){limit = 30 //_available_link}; i += 1; //increment the index ; duration = i*multiplier ; console.log('First',duration)
+        // if(limit>30){limit = 30 //_available_link}; i += 1; //increment the index ; duration = i*speed ; console.log('First',duration)
         interval = setInterval(() => {
             // console.log(i)
             try {
@@ -183,15 +193,15 @@
                         //console.log('wont ',limit)
                     } else {
                         if (first_number == 1 || lower_open_link_fast.includes(linkName.toLowerCase())) {
-                            i += 100
-                            duration = 100 + i //duration
+                            i += s
+                            duration = GM_getValue('multiplier') + i //duration
                             //console.log('duration reset ',duration)
                             //console.log('Link is open fast -- ',linkName)
 
                         } else {
 
                             i += 1; //increment the index
-                            duration = i * GM_getValue('multiplier')
+                            duration = i * GM_getValue('speed')
 
                             let value = 9000
                             if (duration >= value) {
@@ -205,14 +215,14 @@
                             first_number--
                             if (first_number >= 0) {
                                 open_link.click()
-                                //console.log('a', open_link.parentElement.parentElement.getElementsByClassName('name')[0].innerText.trim())
+                                // console.log('a', open_link.parentElement.parentElement.getElementsByClassName('name')[0].innerText.trim())
                                 clearInterval(interval)
                                 appear() // re-run
                             }
                         }, duration)
                     }
                 } else {
-                    duration = i * GM_getValue('multiplier')
+                    duration = i * GM_getValue('speed')
 
 
                     if (DontOpen_LinkByName(open_link)) {
@@ -257,27 +267,48 @@
 
 
     body.appendChild(button);
-    body1.appendChild(mult_add);
-    mult_add.innerHTML = '+'
-    body1.appendChild(mult_sub);
-    mult_sub.innerHTML = '-'
-    body1.appendChild(dis);
-    dis.innerHTML = 'DS - ' + GM_getValue('multiplier') //DS=default Speed
 
+    body1.appendChild(speed_add);
+    speed_add.innerHTML = 'Speed+'
+    body1.appendChild(speed_sub);
+    speed_sub.innerHTML = 'speed-'
+    body1.appendChild(dis);
+
+    body1.appendChild(mult_add);
+    mult_add.innerHTML = 'mult+'
+    body1.appendChild(mult_sub);
+    mult_sub.innerHTML = 'mult-'
+    body1.appendChild(dis1);
+
+    dis.innerHTML = 'DS - ' + GM_getValue('speed', speed) //DS=default Speed
+    dis1.innerHTML = 'DM - ' + GM_getValue('multiplier', multiplier) //DM=default Speed
     // // 3. Add event handler
     button.addEventListener("click", function () {
         checkButton()
     });
+    speed_add.addEventListener("click", function () {
+        speed = GM_getValue('speed') + 50
+        GM_setValue("speed", speed);
+        dis.innerHTML = 'CS - ' + GM_getValue('speed') // CS = current setSpeed
+    });
+    speed_sub.addEventListener("click", function () {
+        if (!(speed <= 50)) {
+            speed = GM_getValue('speed') - 50
+            GM_setValue("speed", speed);
+            dis.innerHTML = 'CS - ' + GM_getValue('speed')
+        }
+    });
+    /////MuLT Button
     mult_add.addEventListener("click", function () {
         multiplier = GM_getValue('multiplier') + 50
         GM_setValue("multiplier", multiplier);
-        dis.innerHTML = 'CS - ' + GM_getValue('multiplier') // CS = current setSpeed
+        dis1.innerHTML = 'CM - ' + GM_getValue('multiplier') // CS = current setSpeed
     });
     mult_sub.addEventListener("click", function () {
         if (!(multiplier <= 50)) {
             multiplier = GM_getValue('multiplier') - 50
             GM_setValue("multiplier", multiplier);
-            dis.innerHTML = 'CS - ' + GM_getValue('multiplier')
+            dis1.innerHTML = 'CM - ' + GM_getValue('multiplier')
         }
 
 
@@ -292,6 +323,5 @@
     if (!_alreadyRun) {
         main()
     }
-
 
 })();
