@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoFCB(NextClicker)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      1.6.2
+// @version      1.6.3
 // @description  Auto click next button on shortlink sites.
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(NextClicker).user.js
@@ -17,6 +17,7 @@
     var href = window.location.href
     if(href.includes('dogemate.com')||href.includes('faupto.com')){$("#bdt").click()}
     else if (href.includes('theblogcash')){document.getElementsByClassName("btn btn-info text-white btn-lg next-button")[0].click()}
+    else if (href.includes('orangeptc')){setTimeout( ()=>{document.querySelector("input").click()},4002)}
     else if (href.includes('prolinks.xyz')||
              href.includes('linkdesh.xyz')||
              href.includes('bitsfree.xyz')||
@@ -41,7 +42,13 @@
         setInterval(()=>{yuidea1()},2000)
     }
     else if(href.includes('ez4short.com/')){
-        window.onload=(e)=>{e.preventDefault;window.stop()}
+        window.onload=(e)=>{e.preventDefault;window.stop()
+                           }}
+    else if(href.includes('forex-gold.net')||
+            href.includes('healthy4pepole.com')
+           ){
+        window.location=document.getElementsByClassName('submitBtn btn btn-primary ')[0].getAttribute('href')
     }
+
 
 })();
