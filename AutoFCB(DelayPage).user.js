@@ -19,7 +19,7 @@
     'use strict';
     // Your code here...
     var delayOn = GM_SuperValue.get('delayOn', [])
-    var error = document.getElementsByClassName('alert-danger')[0]
+    var error = document.querySelector('div.alert.alert-danger')
     var host = window.location.host.toLowerCase().replace(/https:\/\/|www\./ig, '')
     var back = String(window.performance.getEntriesByType("navigation")[0].type) === "back_forward"
 
@@ -42,10 +42,12 @@
             window.close()
         }
     }
+
     if (back && !(delayOn.includes(host))) {
         delayOn.push(host)
         GM_SuperValue.set('delayOn', delayOn);
     }
+
     if (host.includes('auto')) {
         waitForKeyElements(error, addDelay);
     } else {
