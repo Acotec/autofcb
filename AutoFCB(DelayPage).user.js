@@ -17,8 +17,11 @@
 (function() {
     'use strict';
     // Your code here...
-    var element, error1052, alreadyVisit, success,referrer;
-    var def = ['express-cut', 'bitlinks', 'neonlink', 'faucet', 'bitcoinly', 'kiiw', 'adbull', 'linko', 'clickit', 'owllink', 'pingit']
+    var element, error1052, alreadyVisit, success, referrer;
+    var def = ['express-cut', 'bitlinks', 'neonlink.net', '100count.net', 'bitcoinly.in',
+        'kiiw.icu', 'adbull.me', 'Linko', 'Clickit', 'owllink.net', 'pingit', 'cashurl',
+        'adshort', 'aii.sh', 'fc.lc', 'riful'
+    ]
     var delayOn = GM_SuperValue.get('delayOn', def)
     var host = window.location.host.toLowerCase().replace(/https:\/\/|www\.|\..*/ig, '')
     var autofcb = /autofaucet.*/.test(host)
@@ -39,7 +42,9 @@
         } else if (referrer == '' && !alreadyVisit) {
             window.history.go(-1)
             //window.history.back()
-        } else{ window.close()}
+        } else {
+            window.close()
+        }
     }
 
     if (autofcb) {
