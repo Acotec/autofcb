@@ -1,16 +1,19 @@
 // ==UserScript==
-// @name        AutoFCB(2)
-// @namespace    Faucet
+// @name         AutoFCB(2)
+// @namespace    https://github.com/Acotec/autofcb
 // @version      2.1.7
 // @description  AutomateButtons
 // @author       Acotec
+// @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(2).user.js
+// @downloadURL  https://github.com/Acotec/autofcb/raw/master/AutoFCB(2).user.js
 // @include      *auto*/shortlinks
 // @grant        GM_setValue
 // @grant        GM_getValue
+// @grant        unsafeWindow
 // @grant        window.close
 // @require      http://code.jquery.com/jquery-3.5.1.min.js
 // ==/UserScript==
-(function () {
+(function() {
     'use strict';
     //Dont click the link in this list
     var _DontOpen = ['LootLinks', 'bestshort', 'SkipAz']
@@ -28,7 +31,10 @@
     var i = 0; //index (for looping purpose)
     var interval; //for setInterval
     var duration; //for setInterval duration
-    var speed = GM_getValue('speed', 100); //the duration speed
+    var speed = 100; //the duration speed
+    if (String(GM_getValue('speed')) == 'undefined' || String(GM_getValue('speed')) == 'NaN' || String(GM_getValue('speed')) == 'null') {
+        GM_setValue('speed', speed)
+    }
 
     // 1. Create the button
     var button = document.createElement("button");
@@ -162,11 +168,7 @@
     function appear() { //define a function
         let limit = _ordered_LinkToVisitOnPage.length
         // if(limit>30){limit = 30 //_available_link}; i += 1; //increment the index ; duration = i*speed ; console.log('First',duration)
-        // i ++; //increment the index
-        // console.log(i)
-        // duration = i* speed
         interval = setInterval(() => {
-
             try {
                 let _getlink = _ordered_LinkToVisitOnPage.splice(0, 1)[0],
                     open_link = _getlink.parentNode.parentNode.parentNode.querySelector("button"),
@@ -184,7 +186,7 @@
                     } else {
 
                         i++; //increment the index
-                        duration = i * speed
+                        duration = i * GM_getValue('speed')
 
                         //console.log(i)
 
@@ -199,7 +201,7 @@
                         }, duration)
                         }
                 } else { //if Available link is greater than 1000
-                    duration = i * speed
+                    duration = i * GM_getValue('speed')
 
                     if (DontOpen_LinkByName(open_link)) {
                         //console.log('Shortlink Among Dont Open')
@@ -232,36 +234,37 @@
 
 
     function main() {
-
         GM_setValue("_alreadyRun", true);
         //console.log("GM_value is now set to-" + GM_getValue("_alreadyRun"))
         ViewsOnPage()
         Sort_And_Remove_Duplicate()
         Ordered_LinkToView()
-
         appear();
     }
 
 
     body.appendChild(button);
+
     body1.appendChild(speed_add);
     speed_add.innerHTML = 'speed +'
+
     body1.appendChild(speed_sub);
     speed_sub.innerHTML = 'speed -'
+
     body1.appendChild(dis);
     dis.innerHTML = 'DS - ' + GM_getValue('speed') //DS=default Speed
 
     // // 3. Add event handler
-    button.addEventListener("click", function () {
+    button.addEventListener("click", function() {
         checkButton()
     });
-    speed_add.addEventListener("click", function () {
+    speed_add.addEventListener("click", function() {
         speed += 50
         GM_setValue("speed", speed);
         dis.innerHTML = 'CS - ' + speed // CS = current setSpeed
     });
-    speed_sub.addEventListener("click", function () {
-        if (!(speed <= 50)) {
+    speed_sub.addEventListener("click", function() {
+        if (!(speed <= 0)) {
             speed -= 50
             GM_setValue("speed", speed);
         }
@@ -270,7 +273,7 @@
     });
     //////////////////
 
-    window.onload = function () {
+    window.onload = function() {
         pageR()
 
     }
