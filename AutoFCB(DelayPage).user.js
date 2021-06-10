@@ -12,15 +12,15 @@
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        window.close
-// @run-at       document-end
+// @run-at       document-start
 // ==/UserScript==
 (function() {
     'use strict';
     // Your code here...
     var element, error1052, alreadyVisit, success, referrer;
-    var def = ['express-cut', 'bitlinks', 'neonlink.net', '100count.net', 'bitcoinly.in',
-        'kiiw.icu', 'adbull.me', 'Linko', 'Clickit', 'owllink.net', 'pingit', 'cashurl',
-        'adshort', 'aii.sh', 'fc.lc', 'riful'
+    var def = ['express-cut', 'bitlinks', 'neonlink', 'faucet', 'bitcoinly',
+        'kiiw', 'adbull', 'linko', 'Clickit', 'owllink', 'pingit', 'cashurl',
+        'adshort', 'aii','riful'
     ]
     var delayOn = GM_SuperValue.get('delayOn', def)
     var host = window.location.host.toLowerCase().replace(/https:\/\/|www\.|\..*/ig, '')
