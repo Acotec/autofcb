@@ -1,22 +1,19 @@
 // ==UserScript==
-// @name         AutoFCB(2)
-// @namespace    https://github.com/Acotec/autofcb
-// @version      2.1.6
+// @name        AutoFCB(2)
+// @namespace    Faucet
+// @version      2.1.7
 // @description  AutomateButtons
 // @author       Acotec
-// @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(2).user.js
-// @downloadURL  https://github.com/Acotec/autofcb/raw/master/AutoFCB(2).user.js
 // @include      *auto*/shortlinks
 // @grant        GM_setValue
 // @grant        GM_getValue
-// @grant        unsafeWindow
 // @grant        window.close
 // @require      http://code.jquery.com/jquery-3.5.1.min.js
 // ==/UserScript==
 (function () {
     'use strict';
     //Dont click the link in this list
-    var _DontOpen = ['LootLinks', 'bestshort', 'SkipAz', 'try2link']
+    var _DontOpen = ['LootLinks', 'bestshort', 'SkipAz']
     var _open_link_fast = []
     var _alreadyRun = GM_getValue("_alreadyRun")
     var _available_link = parseInt(document.getElementsByClassName('amount')[1].textContent)
@@ -29,26 +26,16 @@
 
     /* variable for appearFunction */
     var i = 0; //index (for looping purpose)
-    var s = 10; //index
     var interval; //for setInterval
     var duration; //for setInterval duration
-    var multiplier = 500//GM_getValue('speed',500)
-    var speed = 1500//GM_getValue('speed',1500); //the duration speed
-    if(String(GM_getValue('speed'))=='undefined'||String(GM_getValue('speed'))=='NaN'||String(GM_getValue('speed'))=='null'){
-        GM_setValue('speed',speed)
-    }
-    if(String(GM_getValue('multiplier'))=='undefined'||String(GM_getValue('multiplier'))=='NaN'||String(GM_getValue('multiplier'))=='null'){
-        GM_setValue('multiplier',multiplier)
-    }
+    var speed = GM_getValue('speed', 100); //the duration speed
 
     // 1. Create the button
     var button = document.createElement("button");
     var speed_add = document.createElement("button");
     var speed_sub = document.createElement("button");
-    var mult_add = document.createElement("button");
-    var mult_sub = document.createElement("button");
     var dis = document.createElement("p");
-    var dis1 = document.createElement("p");
+
     // 2. Append somewhere
     var body = document.getElementsByClassName('col item')[1].getElementsByClassName('content-box')[0]
     var body1 = document.getElementsByClassName('col item')[0].getElementsByClassName('content-box')[0]
@@ -175,8 +162,11 @@
     function appear() { //define a function
         let limit = _ordered_LinkToVisitOnPage.length
         // if(limit>30){limit = 30 //_available_link}; i += 1; //increment the index ; duration = i*speed ; console.log('First',duration)
+        // i ++; //increment the index
+        // console.log(i)
+        // duration = i* speed
         interval = setInterval(() => {
-            // console.log(i)
+
             try {
                 let _getlink = _ordered_LinkToVisitOnPage.splice(0, 1)[0],
                     open_link = _getlink.parentNode.parentNode.parentNode.querySelector("button"),
@@ -186,44 +176,30 @@
                 if (_available_link <= 1000) {
                     _getlink = _getlink.textContent;
                     let exFirstNum = _getlink.match(/\/\d*/)[0],
-                        first_number = _getlink.replace(exFirstNum, "");
+                        views_left = _getlink.replace(exFirstNum, "");
                     if (DontOpen_LinkByName(open_link)) {
                         //console.log('Shortlink Among Dont Open')
                         limit++
                         //console.log('wont ',limit)
                     } else {
-                        if (first_number == 1 || lower_open_link_fast.includes(linkName.toLowerCase())) {
-                            i += s
-                            duration = GM_getValue('multiplier') + i //duration
-                            //console.log('duration reset ',duration)
-                            //console.log('Link is open fast -- ',linkName)
 
-                        } else {
+                        i++; //increment the index
+                        duration = i * speed
 
-                            i += 1; //increment the index
-                            duration = i * GM_getValue('speed')
+                        //console.log(i)
 
-                            let value = 9000
-                            if (duration >= value) {
-                                //console.log(duration,'>=',value)
-                                duration = 5000 //duration
-
-                            }
-
-                        }
                         var inter = setInterval(() => {
-                            first_number--
-                            if (first_number >= 0) {
+                            views_left--
+                            if (views_left >= 0) {
                                 open_link.click()
-                                // console.log('a', open_link.parentElement.parentElement.getElementsByClassName('name')[0].innerText.trim())
+                                //console.log('a', open_link.parentElement.parentElement.getElementsByClassName('name')[0].innerText.trim())
                                 clearInterval(interval)
                                 appear() // re-run
                             }
                         }, duration)
                         }
-                } else {
-                    duration = i * GM_getValue('speed')
-
+                } else { //if Available link is greater than 1000
+                    duration = i * speed
 
                     if (DontOpen_LinkByName(open_link)) {
                         //console.log('Shortlink Among Dont Open')
@@ -238,8 +214,8 @@
                 null
             }
             clearInterval(interval); //clear
-            // console.log(limit)
-            //console.log('duration using is', duration)
+            //console.log(limit)
+            //console.log('duration using is',duration)
             if (!limit == 0) {
                 appear(); //re-run
             } else {
@@ -262,55 +238,34 @@
         ViewsOnPage()
         Sort_And_Remove_Duplicate()
         Ordered_LinkToView()
+
         appear();
     }
 
 
     body.appendChild(button);
-
     body1.appendChild(speed_add);
-    speed_add.innerHTML = 'Speed+'
+    speed_add.innerHTML = 'speed +'
     body1.appendChild(speed_sub);
-    speed_sub.innerHTML = 'speed-'
+    speed_sub.innerHTML = 'speed -'
     body1.appendChild(dis);
+    dis.innerHTML = 'DS - ' + GM_getValue('speed') //DS=default Speed
 
-    body1.appendChild(mult_add);
-    mult_add.innerHTML = 'mult+'
-    body1.appendChild(mult_sub);
-    mult_sub.innerHTML = 'mult-'
-    body1.appendChild(dis1);
-
-    dis.innerHTML = 'DS - ' + GM_getValue('speed',speed) //DS=default Speed
-    dis1.innerHTML = 'DM - ' + GM_getValue('multiplier', multiplier) //DM=default Speed
     // // 3. Add event handler
     button.addEventListener("click", function () {
         checkButton()
     });
     speed_add.addEventListener("click", function () {
-        speed = GM_getValue('speed') + 50
+        speed += 50
         GM_setValue("speed", speed);
-        dis.innerHTML = 'CS - ' + GM_getValue('speed') // CS = current setSpeed
+        dis.innerHTML = 'CS - ' + speed // CS = current setSpeed
     });
     speed_sub.addEventListener("click", function () {
         if (!(speed <= 50)) {
-            speed = GM_getValue('speed') - 50
+            speed -= 50
             GM_setValue("speed", speed);
-            dis.innerHTML = 'CS - ' + GM_getValue('speed')
         }
-    });
-    /////MuLT Button
-    mult_add.addEventListener("click", function () {
-        multiplier = GM_getValue('multiplier') + 50
-        GM_setValue("multiplier", multiplier);
-        dis1.innerHTML = 'CM - ' + GM_getValue('multiplier') // CS = current setSpeed
-    });
-    mult_sub.addEventListener("click", function () {
-        if (!(multiplier <= 50)) {
-            multiplier = GM_getValue('multiplier') - 50
-            GM_setValue("multiplier", multiplier);
-            dis1.innerHTML = 'CM - ' + GM_getValue('multiplier')
-        }
-
+        dis.innerHTML = 'CS - ' + speed
 
     });
     //////////////////
