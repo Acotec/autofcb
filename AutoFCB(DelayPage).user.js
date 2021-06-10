@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         AutoFCB(DelayPage)
+// @name         AutoFCB(DelayPageorClose)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      0.7.5
-// @description  Delay some shortlink page loading time
+// @version      0.7.6
+// @description  Delay some shortlink page loading time and close it when done
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(DelayPage).user.js
 // @downloadURL  https://github.com/Acotec/autofcb/raw/master/AutoFCB(DelayPage).user.js
@@ -19,43 +19,50 @@
     'use strict';
     // Your code here...
     var delayOn = GM_SuperValue.get('delayOn', [])
-    var error = document.querySelector('div.alert.alert-danger')
-    var host = window.location.host.toLowerCase().replace(/https:\/\/|www\./ig, '')
+    var msg = document.querySelector('div.alert.alert-danger')
+    var host = window.location.host.toLowerCase().replace(/https:\/\/|www\.|\..*/ig, '')
+    var autofcb = /auto.*.*/.test(host)
     var back = String(window.performance.getEntriesByType("navigation")[0].type) === "back_forward"
+
+    var navigate = performance.getEntriesByType("navigation")[0].redirectCount
+    var redirect = document.referrer.includes('shortlinks/visited/')
+    var success = document.querySelector('div.alert-success') !== null
+
+    var error1052 = msg && msg.innerText.includes('action is marked as suspicious')
+    var alreadyVisit = msg && msg.innerText.includes('already visited this link!')
+    var url = document.referrer.replace(/https:\/\/|www\.|\..*/ig, '')
 
     function sleep(e) {
         for (var n = (new Date).getTime(); new Date < n + 1e3 * e;);
         return 0
     }
 
-    function addDelay() {
-        let error1052 = error.innerText.includes('action is marked as suspicious')
-        let alreadyVisit = error.innerText.includes('already visited this link!')
-        let url = document.referrer.replace(/https:\/\/|www.|\//ig, '')
-        if (error1052 && !(url.includes('auto')) && !(delayOn.includes(url)) && !(url == '')) {
+    function addDelayorClose() {
+        if (error1052 && !(url.includes('auto') || delayOn.includes(url) || url == '' )) {
             delayOn.push(url)
             GM_SuperValue.set('delayOn', delayOn);
         } else if (url == '' && !alreadyVisit) {
+            window.history.go(-1)
             window.history.back()
             //window.close()
-        } else {
-            window.close()
+        } else if(!(error1052) && navigate == 1 || redirect == true || success == true) {
+            // window.close()
+            // window.close()
+            alert()
         }
+
     }
 
-    if (back && !(delayOn.includes(host))) {
+
+    if (autofcb) {
+        waitForKeyElements(msg, addDelayorClose)
+    }
+    else if (back && !(delayOn.includes(host) || autofcb)) {
         delayOn.push(host)
         GM_SuperValue.set('delayOn', delayOn);
     }
-
-    if (host.includes('auto')) {
-        waitForKeyElements(error, addDelay);
-    } else {
-        for (const link of delayOn) {
-            if (host.includes(link.toLowerCase())) {
-                sleep(16);
-
-            }
-        }
+    else if(delayOn.includes(host)){
+        sleep(16);
     }
+
 })();
