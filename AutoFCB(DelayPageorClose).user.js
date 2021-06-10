@@ -4,8 +4,8 @@
 // @version      0.7.7
 // @description  Delay some shortlink page loading time and close it when done
 // @author       Acotec
-// @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(DelayPage).user.js
-// @downloadURL  https://github.com/Acotec/autofcb/raw/master/AutoFCB(DelayPage).user.js
+// @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(DelayPageorClose).user.js
+// @downloadURL  https://github.com/Acotec/autofcb/raw/master/AutoFCB(DelayPageorClose).user.js
 // @require      https://github.com/Acotec/require/raw/master/Super_GM.user.js
 // @require      https://github.com/Acotec/require/raw/master/waitForKeyElements.min.js
 // @match        *://*/*
