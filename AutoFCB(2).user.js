@@ -31,9 +31,9 @@
     var i = 0; //index (for looping purpose)
     var interval; //for setInterval
     var duration; //for setInterval duration
-    var speed = 100; //the duration speed
-    if (String(GM_getValue('speed')) == 'undefined' || String(GM_getValue('speed')) == 'NaN' || String(GM_getValue('speed')) == 'null') {
-        GM_setValue('speed', speed)
+    var speed = GM_getValue('speed',100); //the duration speed
+    if (String(speed) == 'undefined' || String(speed) == 'NaN' || String(GM_getValue(speed)) == 'null') {
+        GM_setValue('speed', 100)
     }
 
     // 1. Create the button
@@ -261,14 +261,14 @@
     speed_add.addEventListener("click", function() {
         speed += 50
         GM_setValue("speed", speed);
-        dis.innerHTML = 'CS - ' + speed // CS = current setSpeed
+        dis.innerHTML = 'CS - ' + GM_getValue('speed') // CS = current setSpeed
     });
     speed_sub.addEventListener("click", function() {
-        if (!(speed <= 0)) {
+        if (!(speed <= 50)) {
             speed -= 50
             GM_setValue("speed", speed);
         }
-        dis.innerHTML = 'CS - ' + speed
+        dis.innerHTML = 'CS - ' +  GM_getValue('speed')
 
     });
     //////////////////
