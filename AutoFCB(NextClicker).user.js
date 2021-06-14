@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         AutoFCB(NextClicker)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      1.6.3
+// @version      1.6.4
 // @description  Auto click next button on shortlink sites.
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(NextClicker).user.js
 // @downloadURL  https://github.com/Acotec/autofcb/raw/master/AutoFCB(NextClicker).user.js
 // @match        *://*/*
 // @run-at       document-idle
+// @require      https://github.com/Acotec/require/raw/master/waitForKeyElements.min.js
 // @require      http://code.jquery.com/jquery-3.5.1.min.js
 // ==/UserScript==
 
@@ -44,10 +45,13 @@
     else if(href.includes('ez4short.com/')){
         window.onload=(e)=>{e.preventDefault;window.stop()
                            }}
-    else if(href.includes('forex-gold.net')||
-            href.includes('healthy4pepole.com')
-           ){
-        window.location=document.getElementsByClassName('submitBtn btn btn-primary ')[0].getAttribute('href')
+    else if(href.includes('forex-gold.net')){
+        waitForKeyElements('a[href*="health"',(e)=>{ window.location=e.getAttribute('href')},true,0)
+        //window.location=document.getElementsByClassName('submitBtn btn btn-primary ')[0].getAttribute('href')
+    }
+    else if(href.includes('healthy4pepole.com')){
+        scrollToForm()
+        waitForKeyElements('.s-btn-f',(e)=>{ window.location=e.getAttribute('href')},true,0)
     }
 
 
