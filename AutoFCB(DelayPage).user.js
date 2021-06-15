@@ -52,7 +52,7 @@
         waitForKeyElements("div.alert-danger", (element) => {
             addDelayorClose(element)
         }, );
-    } else if (back && document.referrer.includes('auto') && !(delayOn.includes(host) || host.includes('auto'))) {
+    } else if (back && /auto(faucet|claim|bitco)/ig.test(document.referrer) && !(delayOn.includes(host) || host.includes('auto'))) {
         delayOn.push(host)
         GM_SuperValue.set('delayOn', delayOn);
     }else if (delayOn.includes(host)) {
