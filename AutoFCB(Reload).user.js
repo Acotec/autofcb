@@ -7,12 +7,21 @@
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(Reload).user.js
 // @downloadURL  https://github.com/Acotec/autofcb/raw/master/AutoFCB(Reload).user.js
 // @include      *auto*/dashboard/shortlinks/visited*
+// @run-at       document-start
 // ==/UserScript==
 
 (function() {
     'use strict';
-    var i = 0
-    setInterval(()=>{document.title = 'Reload '+ i +''+document.title ;i++},1000)
-    setInterval(() => window.location.reload(false), 30*1000);
+    function countDown(i, callback) {
+        callback = callback || function(){};
+        var int = setInterval(function() {
+            document.title='Reload '+ i
+            i-- || (clearInterval(int), callback());
+        }, 1000);
+    }
+
+    countDown(30, function(){
+        window.location.reload(false)
+    });
 
 })();
