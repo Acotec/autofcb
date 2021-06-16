@@ -11,7 +11,8 @@
 
 (function() {
     'use strict';
+    var i = 0
+    setInterval(()=>{document.title = 'Reload '+ i +''+document.title ;i++},1000)
     setInterval(() => window.location.reload(false), 30*1000);
-    document.title = 'Reload-' + document.title
 
 })();
