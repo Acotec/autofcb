@@ -20,7 +20,7 @@
         }, 1000);
     }
 
-    countDown(30, function(){
+    countDown(60, function(){
         window.location.reload(false)
     });
 
