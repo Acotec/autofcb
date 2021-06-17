@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoFCB(DelayPage)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      0.7.10
+// @version      0.7.11
 // @description  Delay some shortlink page loading time and close it when done
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(DelayPage).user.js
@@ -39,7 +39,7 @@
         alreadyVisit = element.innerText.toLowerCase().includes('already visited this link!')
         referrer = document.referrer.replace(/https:\/\/|www\.|\[^.*]|\/.*/ig, '')
         if (error1052 && !(referrer.includes('auto') || delayOn.includes(referrer) || referrer == '')) {
-            delayOn.push(host)
+            delayOn.push(referrer)
             GM_SuperValue.set('delayOn', delayOn);
         } else if (referrer == '' && autofcb && !(alreadyVisit  || delayOn.includes(referrer))){
             window.history.go(-1)
