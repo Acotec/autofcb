@@ -19,11 +19,9 @@
     'use strict';
     // Your code here...
     var element, error1052, alreadyVisit, success, referrer;
-    var default_host =[]
-    // ['express-cut.ovh', 'bitlinks.pw', 'neonlink.net', 'faucet.100count.net', 'bitcoinly.in',
-    //                'kiiw.icu', 'adbull.me', 'owllink.net', 'pingit.im', 'cashurl.in',
-    //                'adshort.co', 'aii.sh', 'riful.com','fc.lc',
-    //               ]
+    var default_host =['express-cut.ovh', 'bitlinks.pw', 'neonlink.net', 'faucet.100count.net', 'bitcoinly.in',
+                       'kiiw.icu', 'adbull.me', 'owllink.net', 'pingit.im', 'cashurl.in',
+                       'adshort.co', 'aii.sh', 'riful.com','fc.lc']
     var delayOn = GM_SuperValue.get('delayOn', default_host)
     var host = window.location.host.toLowerCase().replace(/https:\/\/|www\.|\[^.*]|\/.*/ig, '')
     var autofcb = /auto(faucet|claim|bitco)/ig.test(host)
@@ -41,7 +39,7 @@
         if (error1052 && !(referrer.includes('auto') || delayOn.includes(referrer) || referrer == '')) {
             delayOn.push(referrer)
             GM_SuperValue.set('delayOn', delayOn);
-        } else if (referrer == '' && autofcb && !(alreadyVisit  || delayOn.includes(referrer))){
+        } else if (referrer == '' && autofcb && !(alreadyVisit || delayOn.includes(referrer))){
             window.history.go(-1)
             //window.history.back()
         } else {
@@ -52,11 +50,11 @@
         waitForKeyElements("div.alert-danger", (element) => {
             addDelayorClose(element)
         }, );
-    } else if (back && /auto(faucet|claim|bitco)/ig.test(document.referrer) && !(delayOn.includes(host) || host.includes('auto'))) {
+    } else if (back && /auto(faucet|claim|bitco)/ig.test(document.referrer) && !(delayOn.includes(host) || /auto(faucet|claim|bitco)/ig.test(host)) ) {
         delayOn.push(host)
         GM_SuperValue.set('delayOn', delayOn);
     }else if (delayOn.includes(host)) {
-        sleep(16);
+        sleep(17);
     }
 
 })();
