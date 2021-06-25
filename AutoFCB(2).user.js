@@ -1,40 +1,41 @@
 // ==UserScript==
 // @name         AutoFCB(2)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      2.1.7
+// @version      2.1.8
 // @description  AutomateButtons
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(2).user.js
 // @downloadURL  https://github.com/Acotec/autofcb/raw/master/AutoFCB(2).user.js
+// @resource     _DontOpen https://github.com/Acotec/resources/raw/master/_DontOpen.txt
 // @include      *auto*/shortlinks
 // @grant        GM_setValue
 // @grant        GM_getValue
+// @grant        GM_getResourceText
 // @grant        unsafeWindow
 // @grant        window.close
 // @require      http://code.jquery.com/jquery-3.5.1.min.js
 // ==/UserScript==
 (function() {
     'use strict';
-    //Dont click the link in this list
-    var _DontOpen = ['LootLinks', 'bestshort', 'SkipAz']
+    var getDontOpenList=[];for(let e of GM_getResourceText("_DontOpen").split(","))getDontOpenList.push(e);
+    const _DontOpen=[];
+    for(let e of getDontOpenList){let n=e.replace(/\W/gi,"");_DontOpen.includes(n)||_DontOpen.push(n)}
     var _open_link_fast = []
     var _alreadyRun = GM_getValue("_alreadyRun")
     var _available_link = parseInt(document.getElementsByClassName('amount')[1].textContent)
     var _views_ToVisit = $('span#views').toArray()
-    var _totalLink = _views_ToVisit.length - _DontOpen.length;
     var _num_ofLink_toVisit = []
     var _sort_and_Re_Dup = []
     var _ordered_LinkToVisitOnPage = []
     var _order_ByName = []
+    if(_views_ToVisit.length>_DontOpen.length)var _totalLink=_views_ToVisit.length-_DontOpen.length;else _totalLink=_views_ToVisit.length;
 
     /* variable for appearFunction */
     var i = 0; //index (for looping purpose)
     var interval; //for setInterval
     var duration; //for setInterval duration
     var speed = GM_getValue('speed',100); //the duration speed
-    if (String(speed) == 'undefined' || String(speed) == 'NaN' || String(GM_getValue(speed)) == 'null') {
-        GM_setValue('speed', 100)
-    }
+    "undefined"!=String(speed)&&"NaN"!=String(speed)&&"null"!=String(GM_getValue(speed))||GM_setValue("speed",100);
 
     // 1. Create the button
     var button = document.createElement("button");
@@ -70,7 +71,7 @@
             if (_alreadyRun == false) {
                 button.innerHTML = "Script Run(Click to Run Again)";
             } else {
-                button.innerHTML = "Script Not Running--Total Button=" + _views_ToVisit.length;
+                button.innerHTML = "Script Not Running -- SHORTLINKS=" + _views_ToVisit.length;
 
             }
         }
@@ -173,7 +174,7 @@
                 let _getlink = _ordered_LinkToVisitOnPage.splice(0, 1)[0],
                     open_link = _getlink.parentNode.parentNode.parentNode.querySelector("button"),
                     exLinkInfo = _getlink.parentNode.parentNode.getElementsByClassName("name")[0].innerText.trim(),
-                    linkName = exLinkInfo.replace(exLinkInfo.match(/\s*\d* .*/), ""),
+                    linkName = exLinkInfo.replace(exLinkInfo.match(/\s*\d*.*/), ""),
                     lower_open_link_fast = _open_link_fast.map(e => e.toLowerCase());
                 if (_available_link <= 1000) {
                     _getlink = _getlink.textContent;
@@ -184,10 +185,8 @@
                         limit++
                         //console.log('wont ',limit)
                     } else {
-
                         i++; //increment the index
                         duration = i * GM_getValue('speed')
-
                         //console.log(i)
 
                         var inter = setInterval(() => {
@@ -200,9 +199,9 @@
                             }
                         }, duration)
                         }
-                } else { //if Available link is greater than 1000
+                }//end
+                else { //if Available link is greater than 1000
                     duration = i * GM_getValue('speed')
-
                     if (DontOpen_LinkByName(open_link)) {
                         //console.log('Shortlink Among Dont Open')
                         limit++
@@ -210,7 +209,8 @@
                         open_link.click()
                         //console.log('b', open_link.parentElement.parentElement.getElementsByClassName('name')[0].innerText.trim())
                     }
-                }
+
+                }//end
                 clearInterval(interval); //clear
             } catch (err) {
                 null
@@ -218,7 +218,7 @@
             clearInterval(interval); //clear
             //console.log(limit)
             //console.log('duration using is',duration)
-            if (!limit == 0) {
+            if (limit != 0) {
                 appear(); //re-run
             } else {
                 i = 0; //reset
@@ -252,35 +252,31 @@
     speed_sub.innerHTML = 'speed -'
 
     body1.appendChild(dis);
-    dis.innerHTML = 'DS - ' + GM_getValue('speed') //DS=default Speed
+    dis.innerHTML = 'DS - ' + speed//DS=default Speed
 
     // // 3. Add event handler
     button.addEventListener("click", function() {
         checkButton()
     });
     speed_add.addEventListener("click", function() {
-        speed += 50
+        speed += 10
         GM_setValue("speed", speed);
         dis.innerHTML = 'CS - ' + GM_getValue('speed') // CS = current setSpeed
     });
     speed_sub.addEventListener("click", function() {
-        if (!(speed <= 50)) {
-            speed -= 50
+        if (!(speed <= 10)) {
+            speed -= 10
             GM_setValue("speed", speed);
         }
-        dis.innerHTML = 'CS - ' +  GM_getValue('speed')
+        dis.innerHTML = 'CS - ' + GM_getValue('speed')
 
     });
     //////////////////
 
-    window.onload = function() {
-        pageR()
+    window.onload = ()=>{pageR()} ;reloadP()
 
-    }
-    reloadP();
     if (!_alreadyRun) {
         main()
     }
-
 
 })();
