@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoFCB(Mbutt)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      0.7.10
+// @version      0.7.11
 // @description  Open Remain buttons after Auto(FCB) is run , (optional)
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(Mbutt).user.js
@@ -34,7 +34,7 @@
 
     function main() {
         let count = 0
-        let speed = 1000
+        let speed = 4000
         let run = GM_getValue("run")
         let visit = document.querySelector("#visit239 > button")
         let getviews = visit.parentElement.parentElement.getElementsByClassName('info')[0].getElementsByTagName('span')[0].innerText
@@ -42,9 +42,9 @@
         let viewleftInt = parseInt(viewleft)
         loop = 15
 
-        if (viewleftInt < loop) {
+        if (viewleftInt <= loop) {
             var interval = setInterval(() => {
-                (visit)[0].click()
+                $(visit)[0].click()
                 count++
                 if (count > viewleftInt) {
                     clearInterval(interval)
@@ -52,23 +52,23 @@
                     window.close()
                 }
             }, speed)
-        } else {
-            GM_setValue('time', parseInt(viewleftInt / loop))
-            var inter = setInterval(() => {
-                //console.log(visit)
-                if (count < viewleftInt && count <= loop - 1) {
-                    $(visit)[0].click()
-                    count++
-                } else {
-                    clearInterval(inter)
-                    //console.log(parseInt(time-run))
-                    window.close()
-                    window.top.close()
+            } else {
+                GM_setValue('time', parseInt(viewleftInt / loop))
+                var inter = setInterval(() => {
+                    //console.log(visit)
+                    if (count < viewleftInt && count <= loop - 1) {
+                        $(visit)[0].click()
+                        count++
+                    } else {
+                        clearInterval(inter)
+                        //console.log(parseInt(time-run))
+                        window.close()
+                        window.top.close()
+                    }
+
+                }, speed)
+
                 }
-
-            }, speed)
-
-        }
     }
 
     body.appendChild(button);
