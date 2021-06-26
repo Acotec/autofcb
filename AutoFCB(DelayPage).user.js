@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoFCB(DelayPage)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      0.7.11
+// @version      0.7.12
 // @description  Delay some shortlink page loading time and close it when done
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb/raw/master/AutoFCB(DelayPage).user.js
@@ -36,7 +36,7 @@
         error1052 = element.innerText.toLowerCase().includes('action is marked as suspicious')
         alreadyVisit = element.innerText.toLowerCase().includes('already visited this link!')
         referrer = document.referrer.replace(/https:\/\/|www\.|\[^.*]|\/.*/ig, '')
-        if (error1052 && !(referrer.includes('auto') || delayOn.includes(referrer) || referrer == '')) {
+        if (error1052 && !(/auto(faucet|claim|bitco)/ig.test(referrer) || delayOn.includes(referrer) || referrer == '')) {
             delayOn.push(referrer)
             GM_SuperValue.set('delayOn', delayOn);
         } else if (referrer == '' && autofcb && !(alreadyVisit || delayOn.includes(referrer))){
@@ -53,8 +53,8 @@
     } else if (back && /auto(faucet|claim|bitco)/ig.test(document.referrer) && !(delayOn.includes(host) || /auto(faucet|claim|bitco)/ig.test(host)) ) {
         delayOn.push(host)
         GM_SuperValue.set('delayOn', delayOn);
-    }else if (delayOn.includes(host)) {
+    } else if (delayOn.includes(host) && !/adbull/.test(host)) {
         sleep(17);
-    }
+    } else if(/adbull/.test(host)){sleep(7)}
 
 })();
