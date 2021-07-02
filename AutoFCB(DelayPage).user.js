@@ -21,7 +21,7 @@
     var element, error1052, alreadyVisit, success, referrer;
     var default_host =['express-cut.ovh', 'bitlinks.pw', 'neonlink.net', 'faucet.100count.net', 'bitcoinly.in',
                        'kiiw.icu', 'adbull.me', 'owllink.net', 'pingit.im', 'cashurl.in',
-                       'adshort.co', 'aii.sh', 'riful.com','fc.lc']
+                       'adshort.co', 'aii.sh', 'riful.com','fc.lc','coinfly.io']
     var delayOn = GM_SuperValue.get('delayOn', default_host)
     var host = window.location.host.toLowerCase().replace(/https:\/\/|www\.|\[^.*]|\/.*/ig, '')
     var autofcb = /auto(faucet|claim|bitco)/ig.test(host)
@@ -55,6 +55,9 @@
         GM_SuperValue.set('delayOn', delayOn);
     } else if (delayOn.includes(host) && !/adbull/.test(host)) {
         sleep(17);
-    } else if(/adbull/.test(host)){sleep(7)}
+    } else if(/adbull/.test(host)){
+        waitForKeyElements("#go-submit", (e) => {
+            sleep(17)
+        },true,0,-1 );}
 
 })();
