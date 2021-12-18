@@ -42,9 +42,9 @@
         red_icon = GM_getValue('red_icon', ''),
         autoFCB = 'auto(faucet|claim|bitco).(in|org)',
         gist_id = 'e6ed9bbe9feb74e71030c680feba9d71',
-        delayOn = GM_getValue("delayOn","[]");
+        delayOn = GM_getValue("delayOn","[]"),
+        update_delayOn=GM_getValue('update_delayOn',true);
     delayOn = JSON.parse(delayOn);
-
     function getIcons(){
         fetch("https://gist.githubusercontent.com/Harfho/63966e7f7145a5607e710a4cdcb31906/raw/ALBypass_icons.json")
             .then((response) => {
@@ -89,18 +89,23 @@
         }, i))
     }
 
-    function getdelayPages(option=null){
+    function getdelayPages(){
+        //alert('getting delay page')
         GM_xmlhttpRequest({
             method: 'GET',
             url: "https://gist.github.com/Harfho/" + gist_id + "/raw/delaypage.txt?timestamp=' + (+new Date())",
-            nocache: false,
+            nocache:true,
+            revalidate:true,
             onload: (r)=>{
                 let getdelaypages = r.responseText.replace(/[^\w\d.,-]/ig, '').split(',').filter(e => e),
                     delaypages = getdelaypages.map(item => item.replace(/'/ig, '"').toLowerCase());
                 GM_setValue('delayOn', JSON.stringify(delaypages));
-                if(option){window.close();window.close()}}
+            },
+            onerror:(r)=>{}
         })
-    }0==delayOn&&getdelayPages();
+    }if(delayOn==false||update_delayOn==true){
+        GM_setValue('update_delayOn',false)
+        getdelayPages()}
 
     function delayHost(link_host) {
         link_host = new URL(link_host).host
@@ -109,10 +114,10 @@
         }
     }
 
-    function update_delaypage(linkhost) {
-        let getdelaypage = GM_getValue("delayOn","[]")
-        var delaypage = JSON.parse( getdelaypage);
-        //console.log(delaypage,linkhost)
+    function update_delaypage(linkhost=null) {
+        var delaypage = GM_getValue('delayOn');//getdelaypage.map(item => item.replace(/'/ig, '"').toLowerCase())
+        delaypage = JSON.parse(delaypage)
+        //console..log(delaypage,linkhost)
         var access_token = atob('Z2hwXzFVMGhPMTFodTZ6eWxaZ0hMWW5qWFdMTjE1d3V5NjBZN0l6Rw==') //github access gist-Token
         access_token = "Bearer " + access_token
         //console.log(access_token)
@@ -121,48 +126,36 @@
             'Authorization': access_token,
             "Content-Type": "application/json"
         })
-        if (linkhost && !(delaypage.includes(linkhost))) { //if the shortlink is not among list of delaypage before
-            delaypage.push(linkhost.toLowerCase())
-            var raw = JSON.stringify({
-                "files": {
-                    "delaypage.txt": {
-                        "content": JSON.stringify(delaypage)
-                    }
+        var raw = JSON.stringify({
+            "files": {
+                "delaypage.txt": {
+                    "content": JSON.stringify(delaypage)
                 }
-            }),
-                requestOptions = {
-                    method: 'PATCH',
-                    headers: myHeaders,
-                    body: raw,
-                    redirect: 'follow'
-                };
-            fetch("https://api.github.com/gists/" + gist_id, requestOptions)
-                .then(response => response.text())
-                .then((result) => {
-                console.log('Done', delaypage);
-                window.close()
-            }) //console.log(result)
-                .catch((error) => {
-                console.log('error', error);
-            });
-            let msg = linkhost + "has been added to delaypage list on gist"
-            GM_notification({
-                title: '!Bypass-- ' + linkhost,
-                text: msg,
-                timeout: 10000,
-                ondone: () => {},
-            });
-            getdelayPages('after_update')
-        } else {
-            let msg = linkhost + " is Already added to the list of delaypage"
-            GM_notification({
-                title: '!Bypass-- ' + linkhost,
-                text: msg,
-                timeout: 10000,
-                ondone: () => {},
-            }); //console.log('Already added to delaypage')console.log('Updating shortlinks Lists')
+            }
+        }),
+            requestOptions = {
+                method: 'PATCH',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+        fetch("https://api.github.com/gists/" + gist_id, requestOptions)
+            .then(response => response.text())
+            .then((result) => {
+            console.log('Done', delaypage);
+            //GM_setValue('update_delayOn',true);
             window.close()
-        }
+        }) //console.log(result)
+            .catch((error) => {
+            console.log('error', error);
+        });
+        let msg ="push"+linkhost+"to delaypage lis on github"
+        GM_notification({
+            title: '!Bypass-- ' + linkhost,
+            text: msg,
+            timeout: 10000,
+            ondone: () => {},
+        });
     }
 
     function addDelayorClose(element) {
@@ -176,12 +169,15 @@
         }
         if (error1052) {
             //alert(error1052)
+            delayOn = GM_getValue('delayOn');delayOn = JSON.parse(delayOn)
             let previousUrl = GM_getValue('previousUrl','')
             if (referrer && delayOn.includes(referrer) == false) {
-                delayOn.push(referrer);
+                delayOn.push(referrer)
+                GM_setValue('delayOn',JSON.stringify(delayOn))
                 update_delaypage(referrer)
             } else if (previousUrl && delayOn.includes(previousUrl) == false) {
-                delayOn.push(previousUrl);
+                delayOn.push(previousUrl)
+                GM_setValue('delayOn',JSON.stringify(delayOn))
                 update_delaypage(previousUrl)
             }
         } else {
