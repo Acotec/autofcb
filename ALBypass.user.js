@@ -149,7 +149,7 @@
             .catch((error) => {
             console.log('error', error);
         });
-        let msg ="push"+linkhost+"to delaypage lis on github"
+        let msg ="push "+linkhost+" to delaypage list on github"
         GM_notification({
             title: '!Bypass-- ' + linkhost,
             text: msg,
@@ -294,8 +294,8 @@
         GM_xmlhttpRequest({
             method: 'GET',
             url: "https://gist.github.com/Harfho/" + gist_id + "/raw/_DontOpen.txt?timestamp=' + (+new Date())",
-            fetch: true,
-            nocache: false,
+            nocache: true,
+            revalidate:true,
             onload: getDontOpen
         })
 
@@ -310,7 +310,7 @@
                 "accept": "application/vnd.github.v3+json",
                 'Authorization': access_token,
                 "Content-Type": "application/json"
-            })
+            })          
             if (linkName && !(_DontOpen.includes(linkName))) { //if the shortlink is not among _DontOpen before
                 _DontOpen.push(linkName.toLowerCase())
                 var raw = JSON.stringify({
@@ -378,7 +378,11 @@
                 pathname,
                 urlsplice = url.split('/').splice(2, 2),
                 similardomain = getSimilarWord(urlsplice[0], shortlinks_name);
-            urlsplice.push(page_title, domainname, ); //get domain,path and page title
+            if (/.*unsupported url.*/ig.test(toupdate)) {
+                urlsplice.push(page_title, domainname,similardomain ); //get domain,path and page title
+            }
+            else{urlsplice.push(page_title, domainname); //get domain,path and page title
+                }
             //console.log(urlsplice)
             let found = urlsplice.some((r) => {
                 pathname = r;
@@ -390,6 +394,7 @@
                     update_DontOpen(pathname)
                 }
                 if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(pathname)) {
+                    messageError ="shortlink url was changed";linkCantBypass=link
                     update_DontOpen(pathname)
                 }
             } else {
@@ -398,6 +403,7 @@
                     update_DontOpen(domainname)
                 }
                 if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(domainname)) {
+                    messageError ="shortlink url was changed";linkCantBypass=link
                     update_DontOpen(domainname)
                 }
             }
@@ -565,7 +571,6 @@
     } else {
         //favicon(grey_icon)
         let link = window.location.href
-        //alert('link')
         getDomainOrPathNameAndUpdate(link, 'unsupported url')
         //updateAcceptDomain()
     }
