@@ -396,6 +396,8 @@
                 if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(pathname)) {
                     messageError ="shortlink url was changed";linkCantBypass=link
                     update_DontOpen(pathname)
+                    let toname="Yuumari.com",temp_id= "shortlinks_vicissitude", msg= "Cant Bypass " + link;
+                    sendEmail(toname,temp_id,msg)
                 }
             } else {
                 if (/dontopen/ig.test(toupdate)) {
@@ -571,7 +573,7 @@
     } else {
         //favicon(grey_icon)
         let link = window.location.href
+        updateAcceptDomain()
         getDomainOrPathNameAndUpdate(link, 'unsupported url')
-        //updateAcceptDomain()
     }
 })();
