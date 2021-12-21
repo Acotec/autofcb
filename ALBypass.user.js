@@ -38,6 +38,7 @@
         listOfAcceptDomains = GM_getValue('domains', ''),
         retry = 3,
         green_icon = GM_getValue('green_icon', ''),
+        green_icon1 = GM_getValue('green_icon1', ''),
         grey_icon = GM_getValue('grey_icon', ''),
         red_icon = GM_getValue('red_icon', ''),
         autoFCB = 'auto(faucet|claim|bitco).(in|org)',
@@ -67,7 +68,7 @@
             window.location.reload(false)
         });
     }
-    0!=green_icon&&0!=grey_icon&&0!=red_icon||getIcons();
+    0!=green_icon&&0!=green_icon1&&0!=grey_icon&&0!=red_icon||getIcons();
 
     function favicon(icon_base64) {
         let link = document.createElement("link");
@@ -170,15 +171,15 @@
         if (error1052) {
             //alert(error1052)
             delayOn = GM_getValue('delayOn');delayOn = JSON.parse(delayOn)
-            let previousUrl = GM_getValue('previousUrl','')
+            let previousHost = GM_getValue('previousHost','')
             if (referrer && delayOn.includes(referrer) == false) {
                 delayOn.push(referrer)
                 GM_setValue('delayOn',JSON.stringify(delayOn))
                 update_delaypage(referrer)
-            } else if (previousUrl && delayOn.includes(previousUrl) == false) {
-                delayOn.push(previousUrl)
+            } else if (previousHost && delayOn.includes(previousHost) == false) {
+                delayOn.push(previousHost)
                 GM_setValue('delayOn',JSON.stringify(delayOn))
-                update_delaypage(previousUrl)
+                update_delaypage(previousHost)
             }
         } else {
             window.close();window.close();window.close();window.close()
@@ -310,7 +311,7 @@
                 "accept": "application/vnd.github.v3+json",
                 'Authorization': access_token,
                 "Content-Type": "application/json"
-            })          
+            })
             if (linkName && !(_DontOpen.includes(linkName))) { //if the shortlink is not among _DontOpen before
                 _DontOpen.push(linkName.toLowerCase())
                 var raw = JSON.stringify({
@@ -363,8 +364,8 @@
         GM_xmlhttpRequest({
             method: 'GET',
             url: "https://gist.github.com/Harfho/" + gist_id + "/raw/shortlinks_name.txt?timestamp=' + (+new Date())",
-            fetch: true,
             nocache: true,
+            revalidate:true,
             onload: get_Shortlinks
         }, )
 
@@ -393,7 +394,7 @@
                     pathname = getSimilarWord(pathname, shortlinks_name)
                     update_DontOpen(pathname)
                 }
-                if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(pathname)) {
+                else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(pathname)) {
                     messageError ="shortlink url was changed";linkCantBypass=link
                     update_DontOpen(pathname)
                     let toname="Yuumari.com",temp_id= "shortlinks_vicissitude", msg= "Cant Bypass " + link;
@@ -404,7 +405,7 @@
                     domainname = getSimilarWord(domainname, shortlinks_name)
                     update_DontOpen(domainname)
                 }
-                if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(domainname)) {
+                else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(domainname)) {
                     messageError ="shortlink url was changed";linkCantBypass=link
                     update_DontOpen(domainname)
                 }
@@ -417,7 +418,7 @@
         favicon(green_icon)
         let urlhost = new URL(link).host
         document.title = urlhost
-        GM_setValue('previousUrl', urlhost)
+        GM_setValue('previousHost', urlhost)
         const key = atob(GM_getResourceText("key").match(/\w*/gi).filter(e => "" != e)[0]),
               baseUrl = 'https://api.yuumari.com/alpha-bypass/',
               u = key, //Access Key;
@@ -456,7 +457,7 @@
                     timer(0)
                 };
             } else { //api return with a message
-                favicon(red_icon)
+                favicon(green_icon1)
                 let tryagain;
                 tryagain = sessionStorage.getItem('tryagain')
                 if (sessionStorage.getItem('tryagain') == null) {
@@ -511,7 +512,7 @@
                 }
             }
         }).catch((error) => {
-            favicon(grey_icon)
+            favicon(red_icon)
             console.error(error);
             let urlhost = new URL(link).host
             console.log("can't bypass " + urlhost + " because of", error)
@@ -571,7 +572,7 @@
             window.setTimeout(window.location.reload(false), time)
         }
     } else {
-        //favicon(grey_icon)
+        favicon(grey_icon)
         let link = window.location.href
         updateAcceptDomain()
         getDomainOrPathNameAndUpdate(link, 'unsupported url')
