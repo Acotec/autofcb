@@ -55,12 +55,14 @@
             return Promise.reject(response);
         }).then((result) => {
             //console.log(result);
-            let green_icon=result.green_icon
-            let grey_icon=result.grey_icon
-            let red_icon=result.red_icon
-            GM_setValue('green_icon',green_icon)
-            GM_setValue('grey_icon',grey_icon)
-            GM_setValue('red_icon',red_icon)
+             let green_icon=result.green_icon
+             let green_icon1=result.green_icon1
+             let grey_icon=result.grey_icon
+             let red_icon=result.red_icon
+             GM_setValue('green_icon',green_icon)
+             GM_setValue('green_icon1',green_icon)
+             GM_setValue('grey_icon',grey_icon)
+             GM_setValue('red_icon',red_icon)
         }).catch((error) => {
             //alert(error)
             //console.error(error);
