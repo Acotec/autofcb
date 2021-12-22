@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ALBypass
 // @namespace    https://github.com/Acotec/autofcb
-// @version      0.1.6
+// @version      0.1.7
 // @description  Bypass URL links
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb_meta/raw/master/ALBypass.user.js
@@ -97,8 +97,8 @@
         GM_xmlhttpRequest({
             method: 'GET',
             url: "https://gist.github.com/Harfho/" + gist_id + "/raw/delaypage.txt?timestamp=' + (+new Date())",
+            revalidate:false,
             nocache:true,
-            revalidate:true,
             onload: (r)=>{
                 let getdelaypages = r.responseText.replace(/[^\w\d.,-]/ig, '').split(',').filter(e => e),
                     delaypages = getdelaypages.map(item => item.replace(/'/ig, '"').toLowerCase());
@@ -197,8 +197,8 @@
         window.location.reload()
     }
 
-    function getSimilarWord(word, knownWords) {
-        const threshold = 0.3
+    function getSimilarWord(word, knownWords,_threshold=0.3) {
+        const threshold = _threshold
 
         function getBigram(word) {
             let result = [];
@@ -297,8 +297,8 @@
         GM_xmlhttpRequest({
             method: 'GET',
             url: "https://gist.github.com/Harfho/" + gist_id + "/raw/_DontOpen.txt?timestamp=' + (+new Date())",
-            nocache: true,
-            revalidate:true,
+            revalidate:false,
+            nocache:true,
             onload: getDontOpen
         })
 
@@ -366,8 +366,8 @@
         GM_xmlhttpRequest({
             method: 'GET',
             url: "https://gist.github.com/Harfho/" + gist_id + "/raw/shortlinks_name.txt?timestamp=' + (+new Date())",
-            nocache: true,
-            revalidate:true,
+            revalidate:false,
+            nocache:true,
             onload: get_Shortlinks
         }, )
 
@@ -377,14 +377,14 @@
             //console.log(shortlinks_name)
             let url = window.location.href.toLowerCase(),
                 page_title = document.title.toLowerCase().trim(),
-                domainname = new URL(link).host.replace(/\..*/ig, ""), //get domainname
+                hostname = new URL(link).host, //get hostname
                 pathname,
                 urlsplice = url.split('/').splice(2, 2),
                 similardomain = getSimilarWord(urlsplice[0], shortlinks_name);
             if (/.*unsupported url.*/ig.test(toupdate)) {
-                urlsplice.push(page_title, domainname,similardomain ); //get domain,path and page title
+                urlsplice.push(page_title, hostname,similardomain ); //get domain,path and page title
             }
-            else{urlsplice.push(page_title, domainname); //get domain,path and page title
+            else{urlsplice.push(page_title, hostname); //get domain,path and page title
                 }
             //console.log(urlsplice)
             let found = urlsplice.some((r) => {
@@ -399,17 +399,17 @@
                 else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(pathname)) {
                     messageError ="shortlink url was changed";linkCantBypass=link
                     update_DontOpen(pathname)
-                    let toname="Yuumari.com",temp_id= "shortlinks_vicissitude", msg= "Cant Bypass " + link;
+                    let toname="Harfho",temp_id= "api_issue", msg= "Cant Bypass " + link;
                     sendEmail(toname,temp_id,msg)
                 }
             } else {
                 if (/dontopen/ig.test(toupdate)) {
-                    domainname = getSimilarWord(domainname, shortlinks_name)
-                    update_DontOpen(domainname)
+                    hostname = getSimilarWord(hostname, shortlinks_name)
+                    update_DontOpen(hostname)
                 }
-                else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(domainname)) {
+                else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(hostname)) {
                     messageError ="shortlink url was changed";linkCantBypass=link
-                    update_DontOpen(domainname)
+                    update_DontOpen(hostname)
                 }
             }
         }
@@ -480,7 +480,7 @@
                     if (new RegExp(check, 'ig').test(message)) {
                         messageError = message;
                         linkCantBypass = link
-                        let toname="Yuumari.com",temp_id= "shortlinks_vicissitude", msg= "Cant Bypass " + link + " because of " + message;
+                        let toname="Yuumari.com",temp_id= "shortlinks_vicissitude", msg= "Cant Bypass " + link +" because api return with " + message+" message";
                         sendEmail(toname,temp_id,msg)
                         getDomainOrPathNameAndUpdate(link, 'dontopen') //getDomain Or PathName And Update _DontoOpen with it
                     } else if (/ticket has expired/ig.test(message)) { // if api key is expired
