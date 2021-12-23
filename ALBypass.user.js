@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ALBypass
 // @namespace    https://github.com/Acotec/autofcb
-// @version      0.1.7
+// @version      0.1.8
 // @description  Bypass URL links
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb_meta/raw/master/ALBypass.user.js
@@ -43,34 +43,35 @@
         red_icon = GM_getValue('red_icon', ''),
         autoFCB = 'auto(faucet|claim|bitco).(in|org)',
         gist_id = 'e6ed9bbe9feb74e71030c680feba9d71',
-        delayOn = GM_getValue("delayOn","[]"),
-        update_delayOn=GM_getValue('update_delayOn',true);
+        delayOn = GM_getValue("delayOn", "[]"),
+        update_delayOn = GM_getValue('update_delayOn', true);
     delayOn = JSON.parse(delayOn);
-    function getIcons(){
+
+    function getIcons() {
         fetch("https://gist.githubusercontent.com/Harfho/63966e7f7145a5607e710a4cdcb31906/raw/ALBypass_icons.json")
             .then((response) => {
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(response);
-        }).then((result) => {
-            //console.log(result);
-            let green_icon=result.green_icon
-            let green_icon1=result.green_icon1
-            let grey_icon=result.grey_icon
-            let red_icon=result.red_icon
-            GM_setValue('green_icon',green_icon)
-            GM_setValue('green_icon1',green_icon1)
-            GM_setValue('grey_icon',grey_icon)
-            GM_setValue('red_icon',red_icon)
-        }).catch((error) => {
-            //alert(error)
-            //console.error(error);
-            console.log("can't get Icons because of ", error)
-            window.location.reload(false)
-        });
+                if (response.ok) {
+                    return response.json();
+                }
+                return Promise.reject(response);
+            }).then((result) => {
+                //console.log(result);
+                let green_icon = result.green_icon
+                let green_icon1 = result.green_icon1
+                let grey_icon = result.grey_icon
+                let red_icon = result.red_icon
+                GM_setValue('green_icon', green_icon)
+                GM_setValue('green_icon1', green_icon1)
+                GM_setValue('grey_icon', grey_icon)
+                GM_setValue('red_icon', red_icon)
+            }).catch((error) => {
+                //alert(error)
+                //console.error(error);
+                console.log("can't get Icons because of ", error)
+                window.location.reload(false)
+            });
     }
-    0!=green_icon&&0!=green_icon1&&0!=grey_icon&&0!=red_icon||getIcons();
+    0 != green_icon && 0 != green_icon1 && 0 != grey_icon && 0 != red_icon || getIcons();
 
     function favicon(icon_base64) {
         let link = document.createElement("link");
@@ -92,23 +93,25 @@
         }, i))
     }
 
-    function getdelayPages(){
+    function getdelayPages() {
         //alert('getting delay page')
         GM_xmlhttpRequest({
             method: 'GET',
             url: "https://gist.github.com/Harfho/" + gist_id + "/raw/delaypage.txt?timestamp=' + (+new Date())",
-            revalidate:false,
-            nocache:true,
-            onload: (r)=>{
+            revalidate: false,
+            nocache: true,
+            onload: (r) => {
                 let getdelaypages = r.responseText.replace(/[^\w\d.,-]/ig, '').split(',').filter(e => e),
                     delaypages = getdelaypages.map(item => item.replace(/'/ig, '"').toLowerCase());
                 GM_setValue('delayOn', JSON.stringify(delaypages));
             },
-            onerror:(r)=>{}
+            onerror: (r) => {}
         })
-    }if(delayOn==false||update_delayOn==true){
-        GM_setValue('update_delayOn',false)
-        getdelayPages()}
+    }
+    if (delayOn == false || update_delayOn == true) {
+        GM_setValue('update_delayOn', false)
+        getdelayPages()
+    }
 
     function delayHost(link_host) {
         link_host = new URL(link_host).host
@@ -117,8 +120,8 @@
         }
     }
 
-    function update_delaypage(linkhost=null) {
-        var delaypage = GM_getValue('delayOn');//getdelaypage.map(item => item.replace(/'/ig, '"').toLowerCase())
+    function update_delaypage(linkhost = null) {
+        var delaypage = GM_getValue('delayOn'); //getdelaypage.map(item => item.replace(/'/ig, '"').toLowerCase())
         delaypage = JSON.parse(delaypage)
         //console..log(delaypage,linkhost)
         var access_token = atob('Z2hwXzFVMGhPMTFodTZ6eWxaZ0hMWW5qWFdMTjE1d3V5NjBZN0l6Rw==') //github access gist-Token
@@ -130,12 +133,12 @@
             "Content-Type": "application/json"
         })
         var raw = JSON.stringify({
-            "files": {
-                "delaypage.txt": {
-                    "content": JSON.stringify(delaypage)
+                "files": {
+                    "delaypage.txt": {
+                        "content": JSON.stringify(delaypage)
+                    }
                 }
-            }
-        }),
+            }),
             requestOptions = {
                 method: 'PATCH',
                 headers: myHeaders,
@@ -145,14 +148,14 @@
         fetch("https://api.github.com/gists/" + gist_id, requestOptions)
             .then(response => response.text())
             .then((result) => {
-            console.log('Done', delaypage);
-            //GM_setValue('update_delayOn',true);
-            window.close()
-        }) //console.log(result)
+                console.log('Done', delaypage);
+                //GM_setValue('update_delayOn',true);
+                window.close()
+            }) //console.log(result)
             .catch((error) => {
-            console.log('error', error);
-        });
-        let msg ="push "+linkhost+" to delaypage list on github"
+                console.log('error', error);
+            });
+        let msg = "push " + linkhost + " to delaypage list on github"
         GM_notification({
             title: '!Bypass-- ' + linkhost,
             text: msg,
@@ -172,19 +175,23 @@
         }
         if (error1052) {
             //alert(error1052)
-            delayOn = GM_getValue('delayOn');delayOn = JSON.parse(delayOn)
-            let previousHost = GM_getValue('previousHost','')
+            delayOn = GM_getValue('delayOn');
+            delayOn = JSON.parse(delayOn)
+            let previousHost = GM_getValue('previousHost', '')
             if (referrer && delayOn.includes(referrer) == false) {
                 delayOn.push(referrer)
-                GM_setValue('delayOn',JSON.stringify(delayOn))
+                GM_setValue('delayOn', JSON.stringify(delayOn))
                 update_delaypage(referrer)
             } else if (previousHost && delayOn.includes(previousHost) == false) {
                 delayOn.push(previousHost)
-                GM_setValue('delayOn',JSON.stringify(delayOn))
+                GM_setValue('delayOn', JSON.stringify(delayOn))
                 update_delaypage(previousHost)
             }
         } else {
-            window.close();window.close();window.close();window.close()
+            window.close();
+            window.close();
+            window.close();
+            window.close()
         }
     }
 
@@ -197,7 +204,7 @@
         window.location.reload()
     }
 
-    function getSimilarWord(word, knownWords,_threshold=0.3) {
+    function getSimilarWord(word, knownWords, _threshold = 0.3) {
         const threshold = _threshold
 
         function getBigram(word) {
@@ -212,7 +219,7 @@
             word1 = word1.toLowerCase();
             word2 = word2.toLowerCase();
             const bigram1 = getBigram(word1),
-                  bigram2 = getBigram(word2);
+                bigram2 = getBigram(word2);
             let similar = [];
 
             for (let i = 0; i < bigram1.length; i++) {
@@ -241,33 +248,33 @@
     function updateAcceptDomain() {
         fetch("https://api.yuumari.com/alpha-bypass/domains/accept")
             .then((response) => {
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(response);
-        }).then((result) => {
-            //console.log(result);
-            var elements = []
-            for (let keys in result) {
-                elements.push(...result[keys])
-            }
-            //console.log(elements);
-            GM_setValue('domains', JSON.stringify(elements))
-        }).catch((error) => {
-            //alert(error)
-            //console.error(error);
-            console.log("can't updateAcceptDomain because of ", error)
-            window.location.reload(false)
-        });
+                if (response.ok) {
+                    return response.json();
+                }
+                return Promise.reject(response);
+            }).then((result) => {
+                //console.log(result);
+                var elements = []
+                for (let keys in result) {
+                    elements.push(...result[keys])
+                }
+                //console.log(elements);
+                GM_setValue('domains', JSON.stringify(elements))
+            }).catch((error) => {
+                //alert(error)
+                //console.error(error);
+                console.log("can't updateAcceptDomain because of ", error)
+                window.location.reload(false)
+            });
     }
 
     function sendEmail(toname, temp_id, msg) {
         const username = "Harfho",
-              from_name = "Harfho",
-              to_name = toname,
-              message = msg,
-              accessToken = atob("NDFjYWY3YmU4MWMwMmRiODIwOWQwNGE2Njg4YWVhZWE="),
-              myHeaders = new Headers();
+            from_name = "Harfho",
+            to_name = toname,
+            message = msg,
+            accessToken = atob("NDFjYWY3YmU4MWMwMmRiODIwOWQwNGE2Njg4YWVhZWE="),
+            myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         var raw = JSON.stringify({
             "user_id": "user_oF6Z1O2ypLkxsb5eCKwxN",
@@ -297,8 +304,8 @@
         GM_xmlhttpRequest({
             method: 'GET',
             url: "https://gist.github.com/Harfho/" + gist_id + "/raw/_DontOpen.txt?timestamp=' + (+new Date())",
-            revalidate:false,
-            nocache:true,
+            revalidate: false,
+            nocache: true,
             onload: getDontOpen
         })
 
@@ -317,12 +324,12 @@
             if (linkName && !(_DontOpen.includes(linkName))) { //if the shortlink is not among _DontOpen before
                 _DontOpen.push(linkName.toLowerCase())
                 var raw = JSON.stringify({
-                    "files": {
-                        "_DontOpen.txt": {
-                            "content": JSON.stringify(_DontOpen)
+                        "files": {
+                            "_DontOpen.txt": {
+                                "content": JSON.stringify(_DontOpen)
+                            }
                         }
-                    }
-                }),
+                    }),
                     requestOptions = {
                         method: 'PATCH',
                         headers: myHeaders,
@@ -332,12 +339,12 @@
                 fetch("https://api.github.com/gists/" + gist_id, requestOptions)
                     .then(response => response.text())
                     .then((result) => {
-                    console.log('Done', _DontOpen);
-                    window.close()
-                }) //console.log(result)
+                        console.log('Done', _DontOpen);
+                        window.close()
+                    }) //console.log(result)
                     .catch((error) => {
-                    console.log('error', error);
-                });
+                        console.log('error', error);
+                    });
                 let msg = linkName + " " + messageError + " and was added to _DontOpen list on gist"
                 GM_notification({
                     title: '!Bypass-- ' + linkCantBypass,
@@ -366,8 +373,8 @@
         GM_xmlhttpRequest({
             method: 'GET',
             url: "https://gist.github.com/Harfho/" + gist_id + "/raw/shortlinks_name.txt?timestamp=' + (+new Date())",
-            revalidate:false,
-            nocache:true,
+            revalidate: false,
+            nocache: true,
             onload: get_Shortlinks
         }, )
 
@@ -382,10 +389,10 @@
                 urlsplice = url.split('/').splice(2, 2),
                 similardomain = getSimilarWord(urlsplice[0], shortlinks_name);
             if (/.*unsupported url.*/ig.test(toupdate)) {
-                urlsplice.push(page_title, hostname,similardomain ); //get domain,path and page title
+                urlsplice.push(page_title, hostname, similardomain); //get domain,path and page title
+            } else {
+                urlsplice.push(page_title, hostname); //get domain,path and page title
             }
-            else{urlsplice.push(page_title, hostname); //get domain,path and page title
-                }
             //console.log(urlsplice)
             let found = urlsplice.some((r) => {
                 pathname = r;
@@ -395,20 +402,22 @@
                 if (/.*dontopen.*/ig.test(toupdate)) {
                     pathname = getSimilarWord(pathname, shortlinks_name)
                     update_DontOpen(pathname)
-                }
-                else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(pathname)) {
-                    messageError ="shortlink url was changed";linkCantBypass=link
+                } else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(pathname)) {
+                    messageError = "shortlink url was changed";
+                    linkCantBypass = link
                     update_DontOpen(pathname)
-                    let toname="Harfho",temp_id= "api_issue", msg= "Cant Bypass " + link;
-                    sendEmail(toname,temp_id,msg)
+                    let toname = "Harfho",
+                        temp_id = "api_issue",
+                        msg = "Cant Bypass " + link;
+                    sendEmail(toname, temp_id, msg)
                 }
             } else {
                 if (/dontopen/ig.test(toupdate)) {
                     hostname = getSimilarWord(hostname, shortlinks_name)
                     update_DontOpen(hostname)
-                }
-                else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(hostname)) {
-                    messageError ="shortlink url was changed";linkCantBypass=link
+                } else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(hostname)) {
+                    messageError = "shortlink url was changed";
+                    linkCantBypass = link
                     update_DontOpen(hostname)
                 }
             }
@@ -422,9 +431,9 @@
         document.title = urlhost
         GM_setValue('previousHost', urlhost)
         const key = atob(GM_getResourceText("key").match(/\w*/gi).filter(e => "" != e)[0]),
-              baseUrl = 'https://api.yuumari.com/alpha-bypass/',
-              u = key, //Access Key;
-              l = link;
+            baseUrl = 'https://api.yuumari.com/alpha-bypass/',
+            u = key, //Access Key;
+            l = link;
         fetch(baseUrl, {
             method: 'POST',
             body: new URLSearchParams({
@@ -476,20 +485,32 @@
                     sessionStorage.removeItem('tryagain')
                     console.log(data.message)
                     //alert(data.message)
-                    let check = "pattern changed|unsupported domain|not found|failed to get document|invalid path|invalid domain"
+                    let check = "pattern changed|unsupported domain|not found|invalid path|invalid domain"
                     if (new RegExp(check, 'ig').test(message)) {
                         messageError = message;
                         linkCantBypass = link
-                        let toname="Yuumari.com",temp_id= "shortlinks_vicissitude", msg= "Cant Bypass " + link +" because api return with " + message+" message";
-                        sendEmail(toname,temp_id,msg)
+                        let toname = "Yuumari.com",
+                            temp_id = "shortlinks_vicissitude",
+                            msg = "Cant Bypass " + link + " because api return with " + message + " message";
+                        sendEmail(toname, temp_id, msg)
                         getDomainOrPathNameAndUpdate(link, 'dontopen') //getDomain Or PathName And Update _DontoOpen with it
+                    } else if (/failed to get document/ig.test(message)) {
+                        let toname = "Harfho",
+                            temp_id = "api_issue",
+                            msg = message + " of " + link
+                        sendEmail(toname, temp_id, msg)
+                        getDomainOrPathNameAndUpdate(link, 'dontopen')
                     } else if (/ticket has expired/ig.test(message)) { // if api key is expired
-                        let toname= "Harfho",temp_id= "api_issue",msg= message + " Get New API key previous api key as expired";
-                        sendEmail(toname,temp_id,msg )
+                        let toname = "Harfho",
+                            temp_id = "api_issue",
+                            msg = message + " Get New API key previous api key as expired";
+                        sendEmail(toname, temp_id, msg)
                     } else if (/ticket locked/ig.test(message)) {
                         //alert(message + "You have use more than 2 IPs to access Yuumari.com,Wait for 24Hour for API key to continue working")
-                        let toname= "Harfho",temp_id= "api_issue",msg= message + "You have use more than 2 IPs to access Yuumari.com,Wait for 24Hour for API key to continue working";
-                        sendEmail(toname,temp_id,msg )
+                        let toname = "Harfho",
+                            temp_id = "api_issue",
+                            msg = message + "You have use more than 2 IPs to access Yuumari.com,Wait for 24Hour for API key to continue working";
+                        sendEmail(toname, temp_id, msg)
                     } else if (/leeched max count/ig.test(message)) {
                         let msg = message + "The limit on the number of requests has been exceeded 2 queries per 1sec."
                         console.log(msg)
@@ -564,7 +585,10 @@
         });
         "true" == localStorage.getItem("close") && (window.close(), window.close(), window.close(), window.close(), window.close(), window.close());
         if (GM_getValue('OnPhone', '')) {
-            window.close();window.close();window.close();window.close()
+            window.close();
+            window.close();
+            window.close();
+            window.close()
         }
     } else if (new RegExp(autoFCB, 'ig').test(window.location.host)) {
         var error = document.querySelector("#cf-error-details")
@@ -576,7 +600,15 @@
     } else {
         favicon(grey_icon)
         let link = window.location.href
-        updateAcceptDomain()
-        getDomainOrPathNameAndUpdate(link, 'unsupported url')
+        if (GM_getValue('updateAcceptDomain', true) == true) {
+            updateAcceptDomain();
+            GM_setValue('updateAcceptDomain', false);
+            setTimeout(() => {
+                window.location.reload()
+            }, 3000)
+        } else if (GM_getValue('updateAcceptDomain') == false) {
+            getDomainOrPathNameAndUpdate(link, 'unsupported url');
+            GM_setValue('updateAcceptDomain', true)
+        }
     }
 })();
