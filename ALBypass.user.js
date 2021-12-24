@@ -1,14 +1,13 @@
 // ==UserScript==
 // @name         ALBypass
 // @namespace    https://github.com/Acotec/autofcb
-// @version      0.1.8
+// @version      0.2.0
 // @description  Bypass URL links
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb_meta/raw/master/ALBypass.user.js
 // @downloadURL  https://github.com/Acotec/autofcb_meta/raw/master/ALBypass.user.js
 // @match        *://*/*
 // @include      *
-// @resource     key https://gist.githubusercontent.com/Harfho/d4805d8a56793fa59d47e464c6eec243/raw/keyEncode.txt
 // @icon64       data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAAiCAMAAAA9FerRAAAAk1BMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB6eSN1AAAAMHRSTlMA+AXo17f1r6iQfTkqGBMJ/OzlYDMN3MSfW0DhonlpSBzRjIp0bk4iEfC/mIVWyGRxeTntAAABfklEQVQ4y5WU15KDMAxF6S10AoEAIb1nV///dSubTfOIdh8YxvJBvjKSNFrm+vWquNIEOdmT9DbgTABTo5y3+RYA5ZSUOsjOKVCkGlBTwC1wRSE+1OHtXnM3t/sCy1HBW/EAdTrqr61V9gHmfal2mgxdWnRicx36VHVg5wr6taK5WTzAyQrJuSoM6Uzai2FQPsHl4TBnEfauMEK1iPk2jNJD4I4GjFPyhS2vMFJy8ImZw4BYG+/hWCqMl+7+FzLk6a1dOIYy9OP7lMkhmQX7b07ND8uTIlT5p24U8SIsXNcMZqD53dpJO5hS5uDZXJG9JH7PDQZyDcPF5/KefS1rj7jyqN9TxQ2+KfaLH+HKjGe8BxLFXQD0QIrFzt4xry4vJN1+ETpD0zXo3ldCZvlwwUfpU1yCcZsXSzjODRGTX3BDde2ChUkDaC6LO2caq+RNoUZ+iRGHX+mZBqOCNK7xoQSMligFCTl41jJH0g1WOpUmyAtb66ldSNNky1kv8gc+oY9OF7+D2wAAAABJRU5ErkJggg==
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -17,6 +16,7 @@
 // @grant        GM_notification
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getResourceText
+// @grant        GM_addElement
 // @grant        GM_registerMenuCommand
 // @run-at       document-idle
 // @run-at       document-start
@@ -26,7 +26,8 @@
 // @connect      gist.github.com
 // @connect      gist.githubusercontent.com
 // @noframes
-//// @require      https://github.com/Acotec/autofcb_script/raw/master/ALBypass.user.js
+// @nocompat    Chrome
+//// @require   https://github.com/Acotec/autofcb_script/raw/master/ALBypass.user.js
 // ==/UserScript==
 (function () {
     if (window.history.replaceState) {
@@ -50,35 +51,35 @@
     function getIcons() {
         fetch("https://gist.githubusercontent.com/Harfho/63966e7f7145a5607e710a4cdcb31906/raw/ALBypass_icons.json")
             .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                return Promise.reject(response);
-            }).then((result) => {
-                //console.log(result);
-                let green_icon = result.green_icon
-                let green_icon1 = result.green_icon1
-                let grey_icon = result.grey_icon
-                let red_icon = result.red_icon
-                GM_setValue('green_icon', green_icon)
-                GM_setValue('green_icon1', green_icon1)
-                GM_setValue('grey_icon', grey_icon)
-                GM_setValue('red_icon', red_icon)
-            }).catch((error) => {
-                //alert(error)
-                //console.error(error);
-                console.log("can't get Icons because of ", error)
-                window.location.reload(false)
-            });
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        }).then((result) => {
+            //console.log(result);
+            let green_icon = result.green_icon
+            let green_icon1 = result.green_icon1
+            let grey_icon = result.grey_icon
+            let red_icon = result.red_icon
+            GM_setValue('green_icon', green_icon)
+            GM_setValue('green_icon1', green_icon1)
+            GM_setValue('grey_icon', grey_icon)
+            GM_setValue('red_icon', red_icon)
+        }).catch((error) => {
+            //alert(error)
+            //console.error(error);
+            console.log("can't get Icons because of ", error)
+            window.location.reload(false)
+        });
     }
     0 != green_icon && 0 != green_icon1 && 0 != grey_icon && 0 != red_icon || getIcons();
 
     function favicon(icon_base64) {
-        let link = document.createElement("link");
-        link.href = icon_base64;
-        link.rel = "icon";
-        link.type = "image/png";
-        document.getElementsByTagName('head')[0].appendChild(link);
+        GM_addElement(document.getElementsByTagName('head')[0], 'link', {
+            href: icon_base64,
+            rel: "icon",
+            type: "image/png"
+        });
     }
 
     function waitForKeyElements(t, o, e, i, n) {
@@ -133,12 +134,12 @@
             "Content-Type": "application/json"
         })
         var raw = JSON.stringify({
-                "files": {
-                    "delaypage.txt": {
-                        "content": JSON.stringify(delaypage)
-                    }
+            "files": {
+                "delaypage.txt": {
+                    "content": JSON.stringify(delaypage)
                 }
-            }),
+            }
+        }),
             requestOptions = {
                 method: 'PATCH',
                 headers: myHeaders,
@@ -148,13 +149,13 @@
         fetch("https://api.github.com/gists/" + gist_id, requestOptions)
             .then(response => response.text())
             .then((result) => {
-                console.log('Done', delaypage);
-                //GM_setValue('update_delayOn',true);
-                window.close()
-            }) //console.log(result)
+            console.log('Done', delaypage);
+            //GM_setValue('update_delayOn',true);
+            window.close()
+        }) //console.log(result)
             .catch((error) => {
-                console.log('error', error);
-            });
+            console.log('error', error);
+        });
         let msg = "push " + linkhost + " to delaypage list on github"
         GM_notification({
             title: '!Bypass-- ' + linkhost,
@@ -196,13 +197,14 @@
     }
 
     function OnPhone() {
-        if (GM_getValue('OnPhone')) {
-            GM_setValue('OnPhone', false)
-        } else {
-            GM_setValue('OnPhone', true)
-        };
+        0 == GM_getValue("OnPhone", !1) ? GM_setValue("OnPhone", !0) : GM_setValue("OnPhone", !1);
         window.location.reload()
-    }
+    };
+
+    function AllowToSendEmail() {
+        0 == GM_getValue("AllowToSendEmail", !1) ? GM_setValue("AllowToSendEmail", !0) : GM_setValue("AllowToSendEmail", !1);
+        window.location.reload()
+    };
 
     function getSimilarWord(word, knownWords, _threshold = 0.3) {
         const threshold = _threshold
@@ -219,7 +221,7 @@
             word1 = word1.toLowerCase();
             word2 = word2.toLowerCase();
             const bigram1 = getBigram(word1),
-                bigram2 = getBigram(word2);
+                  bigram2 = getBigram(word2);
             let similar = [];
 
             for (let i = 0; i < bigram1.length; i++) {
@@ -248,33 +250,33 @@
     function updateAcceptDomain() {
         fetch("https://api.yuumari.com/alpha-bypass/domains/accept")
             .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                return Promise.reject(response);
-            }).then((result) => {
-                //console.log(result);
-                var elements = []
-                for (let keys in result) {
-                    elements.push(...result[keys])
-                }
-                //console.log(elements);
-                GM_setValue('domains', JSON.stringify(elements))
-            }).catch((error) => {
-                //alert(error)
-                //console.error(error);
-                console.log("can't updateAcceptDomain because of ", error)
-                window.location.reload(false)
-            });
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        }).then((result) => {
+            //console.log(result);
+            var elements = []
+            for (let keys in result) {
+                elements.push(...result[keys])
+            }
+            //console.log(elements);
+            GM_setValue('domains', JSON.stringify(elements))
+        }).catch((error) => {
+            //alert(error)
+            //console.error(error);
+            console.log("can't updateAcceptDomain because of ", error)
+            window.location.reload(false)
+        });
     }
 
     function sendEmail(toname, temp_id, msg) {
         const username = "Harfho",
-            from_name = "Harfho",
-            to_name = toname,
-            message = msg,
-            accessToken = atob("NDFjYWY3YmU4MWMwMmRiODIwOWQwNGE2Njg4YWVhZWE="),
-            myHeaders = new Headers();
+              from_name = "Harfho",
+              to_name = toname,
+              message = msg,
+              accessToken = atob("NDFjYWY3YmU4MWMwMmRiODIwOWQwNGE2Njg4YWVhZWE="),
+              myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         var raw = JSON.stringify({
             "user_id": "user_oF6Z1O2ypLkxsb5eCKwxN",
@@ -296,7 +298,10 @@
         };
         fetch("https://api.emailjs.com/api/v1.0/email/send", requestOptions)
             .then(response => response.text())
-            .then(result => console.log(result))
+            .then((result) => {
+            console.log(result);
+            window.close()
+        })
             .catch(error => console.log('error', error));
     }
 
@@ -324,12 +329,12 @@
             if (linkName && !(_DontOpen.includes(linkName))) { //if the shortlink is not among _DontOpen before
                 _DontOpen.push(linkName.toLowerCase())
                 var raw = JSON.stringify({
-                        "files": {
-                            "_DontOpen.txt": {
-                                "content": JSON.stringify(_DontOpen)
-                            }
+                    "files": {
+                        "_DontOpen.txt": {
+                            "content": JSON.stringify(_DontOpen)
                         }
-                    }),
+                    }
+                }),
                     requestOptions = {
                         method: 'PATCH',
                         headers: myHeaders,
@@ -339,13 +344,17 @@
                 fetch("https://api.github.com/gists/" + gist_id, requestOptions)
                     .then(response => response.text())
                     .then((result) => {
-                        console.log('Done', _DontOpen);
-                        window.close()
-                    }) //console.log(result)
+                    console.log('Done', _DontOpen);
+                    window.close()
+                }) //console.log(result)
                     .catch((error) => {
-                        console.log('error', error);
-                    });
-                let msg = linkName + " " + messageError + " and was added to _DontOpen list on gist"
+                    console.log('error', error);
+                });
+                let toname = "Yuumari.com",
+                    temp_id = "shortlinks_vicissitude",
+                    msg = "Cant Bypass " + linkCantBypass + " because api return with " + messageError + " message";
+                sendEmail(toname, temp_id, msg)
+                msg = linkName + " " + messageError + " and was added to _DontOpen list on gist"
                 GM_notification({
                     title: '!Bypass-- ' + linkCantBypass,
                     text: msg,
@@ -424,16 +433,34 @@
         }
     }
 
+    function update_Accesskey() {
+        GM_xmlhttpRequest({
+            method: 'GET',
+            url: "https://gist.githubusercontent.com/Harfho/d4805d8a56793fa59d47e464c6eec243/raw/keyEncode.txt",
+            revalidate: false,
+            nocache: true,
+            onload: (r) => {
+                let accesskey = r.responseText
+                GM_setValue('accesskey', JSON.stringify(accesskey));
+                console.log(atob(GM_getValue('accesskey').match(/\w*/gi).filter(e => "" != e)[0]))
+            },
+            onerror: (r) => {}
+        })
+    }
+    if (GM_getValue('accesskey', false) == false) {
+        update_Accesskey()
+    }
+
     //bypass the link
     function bypass(link) {
         favicon(green_icon)
         let urlhost = new URL(link).host
         document.title = urlhost
         GM_setValue('previousHost', urlhost)
-        const key = atob(GM_getResourceText("key").match(/\w*/gi).filter(e => "" != e)[0]),
-            baseUrl = 'https://api.yuumari.com/alpha-bypass/',
-            u = key, //Access Key;
-            l = link;
+        const key = atob(GM_getValue('accesskey').match(/\w*/gi).filter(e => "" != e)[0]),
+              baseUrl = 'https://api.yuumari.com/alpha-bypass/',
+              u = key, //Access Key;
+              l = link;
         fetch(baseUrl, {
             method: 'POST',
             body: new URLSearchParams({
@@ -485,34 +512,37 @@
                     sessionStorage.removeItem('tryagain')
                     console.log(data.message)
                     //alert(data.message)
-                    let check = "pattern changed|unsupported domain|not found|invalid path|invalid domain"
+                    let check = "pattern changed|unsupported domain|not found|invalid path|invalid domain|failed to get document"
                     if (new RegExp(check, 'ig').test(message)) {
                         messageError = message;
                         linkCantBypass = link
-                        let toname = "Yuumari.com",
-                            temp_id = "shortlinks_vicissitude",
-                            msg = "Cant Bypass " + link + " because api return with " + message + " message";
-                        sendEmail(toname, temp_id, msg)
                         getDomainOrPathNameAndUpdate(link, 'dontopen') //getDomain Or PathName And Update _DontoOpen with it
-                    } else if (/failed to get document/ig.test(message)) {
-                        let toname = "Harfho",
-                            temp_id = "api_issue",
-                            msg = message + " of " + link
-                        sendEmail(toname, temp_id, msg)
-                        getDomainOrPathNameAndUpdate(link, 'dontopen')
-                    } else if (/ticket has expired/ig.test(message)) { // if api key is expired
-                        let toname = "Harfho",
-                            temp_id = "api_issue",
-                            msg = message + " Get New API key previous api key as expired";
-                        sendEmail(toname, temp_id, msg)
-                    } else if (/ticket locked/ig.test(message)) {
+                    } else if (/ticket.*expired/ig.test(message)) { // if api key is expired
+                        if (GM_getValue('AllowToSendEmail', false)) {
+                            let toname = "Harfho",
+                                temp_id = "api_issue",
+                                msg = message + " Get New API key previous api key as expired";
+                            update_Accesskey()
+                            sendEmail(toname, temp_id, msg)
+                        } else {
+                            update_Accesskey()
+                            setTimeout(() => {
+                                window.location.reload(false)
+                            }, 5000)
+                        }
+                    } else if (/ticket.*locked/ig.test(message)) {
                         //alert(message + "You have use more than 2 IPs to access Yuumari.com,Wait for 24Hour for API key to continue working")
-                        let toname = "Harfho",
-                            temp_id = "api_issue",
-                            msg = message + "You have use more than 2 IPs to access Yuumari.com,Wait for 24Hour for API key to continue working";
-                        sendEmail(toname, temp_id, msg)
+                        if (GM_getValue('AllowToSendEmail', false)) {
+                            let toname = "Harfho",
+                                temp_id = "api_issue",
+                                msg = message + "You have use more than 2 IPs to access Yuumari.com,Wait for 24Hour for API key to continue working";
+                            sendEmail(toname, temp_id, msg)
+                        } else {
+                            console.log(message + "You have use more than 2 IPs to access Yuumari.com,Wait for 24Hour for API key to continue working")
+                            window.close()
+                        }
                     } else if (/leeched max count/ig.test(message)) {
-                        let msg = message + "The limit on the number of requests has been exceeded 2 queries per 1sec."
+                        let msg = message + "The limit on the number of requests has exceeded 2 queries per 1sec."
                         console.log(msg)
                         setTimeout(() => {
                             window.location.reload(false)
@@ -559,7 +589,8 @@
     }
 
     //main
-    GM_registerMenuCommand("OnPhone-" + GM_getValue('OnPhone', ''), OnPhone, "OnPhone");
+    GM_registerMenuCommand("OnPhone-" + GM_getValue('OnPhone', false), OnPhone, "OnPhone");
+    GM_registerMenuCommand("AllowToSendEmail-" + GM_getValue('AllowToSendEmail', false), AllowToSendEmail, "AllowToSendEmail");
     if (!listOfAcceptDomains) {
         updateAcceptDomain()
     } else if (listOfAcceptDomains.includes(window.location.host) && !(/\/===$/.test(window.location.href))) {
@@ -583,12 +614,9 @@
         waitForKeyElements("div.alert-danger", (element) => {
             addDelayorClose(element)
         });
-        "true" == localStorage.getItem("close") && (window.close(), window.close(), window.close(), window.close(), window.close(), window.close());
-        if (GM_getValue('OnPhone', '')) {
+        "true" == localStorage.getItem("close") && (window.close());
+        if (GM_getValue('OnPhone', false)) {
             window.close();
-            window.close();
-            window.close();
-            window.close()
         }
     } else if (new RegExp(autoFCB, 'ig').test(window.location.host)) {
         var error = document.querySelector("#cf-error-details")
