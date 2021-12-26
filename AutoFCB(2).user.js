@@ -374,16 +374,16 @@
                                         hour12: true
                                     }).replace(/\s+/ig, '')
                                     if (/(12|0[0-8]|[1-8])am/ig.test(time)) {
-                                        duration = 2 * 1000
+                                        duration = 1 * 1000
                                     } //time is around 12am-8am
                                     else if (/(9|1[0-1])am/ig.test(time)) {
                                         duration = 5 * 1000
                                     } //time is around 9am-11am
                                     else if (/(12|(0|1[0-9]|[1-9]))pm/ig.test(time)) {
-                                        duration = 8 * 1000
+                                        duration = 10 * 1000
                                     } //time is around 12pm-11pm
                                     else {
-                                        duration = 3 * 1000
+                                        duration = 5 * 1000
                                     }
                                 } else {
                                     duration = i * GM_getValue('speed') * 1000
