@@ -316,7 +316,7 @@
 
         function getDontOpen(response) {
             let getDontOpen = response.responseText.replace(/'|"|\[|\]/ig, '').split(',').filter(e => e);
-            var _DontOpen = getDontOpen.map(item => item.replace(/'/ig, '"').toLowerCase())
+            var _DontOpen = getDontOpen.map(item => item.replace(/'/ig, '"').toLowerCase()).sort()
             //console..log(_DontOpen,linkName)
             var access_token = atob('Z2hwXzFVMGhPMTFodTZ6eWxaZ0hMWW5qWFdMTjE1d3V5NjBZN0l6Rw==') //github access gist-Token
             access_token = "Bearer " + access_token
@@ -352,9 +352,9 @@
                 });
                 let toname = "Yuumari.com",
                     temp_id = "shortlinks_vicissitude",
-                    msg = "Cant Bypass " + linkCantBypass + " because api return with " + messageError + " message";
-                sendEmail(toname, temp_id, msg)
-                msg = linkName + " " + messageError + " and was added to _DontOpen list on gist"
+                    msg = "Cant Bypass " + linkCantBypass + " because api return with " + messageError;
+                sendEmail(toname, temp_id, msg);
+                msg = linkName + " " + messageError + " and was added to _DontOpen list on gist";
                 GM_notification({
                     title: '!Bypass-- ' + linkCantBypass,
                     text: msg,
@@ -362,7 +362,7 @@
                     ondone: () => {},
                 });
             } else {
-                let msg = linkName + " is Already added to _DontOpen"
+                let msg = linkName + " is Already added to _DontOpen because api return with " + messageError;
                 GM_notification({
                     title: '!Bypass-- ' + linkCantBypass,
                     text: msg,
@@ -389,7 +389,7 @@
 
         function get_Shortlinks(response) {
             let get_shortlinks_name = response.responseText.replace(/'|"|\[|\]|\s/ig, '').split(',').filter(e => e);
-            var shortlinks_name = get_shortlinks_name.map(item => item.replace(/'/ig, '"').toLowerCase());
+            var shortlinks_name = get_shortlinks_name.map(item => item.replace(/'/ig, '"').toLowerCase()).sort();
             //console.log(shortlinks_name)
             let url = window.location.href.toLowerCase(),
                 page_title = document.title.toLowerCase().trim(),
@@ -412,20 +412,16 @@
                     pathname = getSimilarWord(pathname, shortlinks_name)
                     update_DontOpen(pathname)
                 } else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(pathname)) {
-                    messageError = "shortlink url was changed";
+                    messageError = toupdate + "\nor\nshortlink url was changed";
                     linkCantBypass = link
                     update_DontOpen(pathname)
-                    let toname = "Harfho",
-                        temp_id = "api_issue",
-                        msg = "Cant Bypass " + link;
-                    sendEmail(toname, temp_id, msg)
                 }
             } else {
                 if (/dontopen/ig.test(toupdate)) {
                     hostname = getSimilarWord(hostname, shortlinks_name)
                     update_DontOpen(hostname)
                 } else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(hostname)) {
-                    messageError = "shortlink url was changed";
+                    messageError = toupdate + "\nor\nshortlink url was changed";
                     linkCantBypass = link
                     update_DontOpen(hostname)
                 }
@@ -511,7 +507,6 @@
                     let urlhost = new URL(l).host
                     sessionStorage.removeItem('tryagain')
                     console.log(data.message)
-                    //alert(data.message)
                     let check = "pattern changed|unsupported domain|not found|invalid path|invalid domain|failed to get document"
                     if (new RegExp(check, 'ig').test(message)) {
                         messageError = message;
