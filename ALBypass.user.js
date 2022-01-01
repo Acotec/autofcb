@@ -418,7 +418,7 @@
                 }
             } else {
                 if (/dontopen/ig.test(toupdate)) {
-                    hostname = getSimilarWord(hostname, shortlinks_name)
+                    hostname = getSimilarWord(hostname, shortlinks_name,0.5)
                     update_DontOpen(hostname)
                 } else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(hostname)) {
                     messageError = toupdate + "\nor\nshortlink url was changed";
