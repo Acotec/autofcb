@@ -37,7 +37,7 @@
         button = document.createElement("button"),
         body = document.getElementsByClassName('col item')[1].getElementsByClassName('content-box')[0],
         gist_id="e6ed9bbe9feb74e71030c680feba9d71",
-        hideVisitedShortlinks=document.querySelector("div.shide").querySelector(".cwrapper");/checked/gi.test(hideVisitedShortlinks.innerHTML)||(setTimeout(()=>{hideVisitedShortlinks.click();hideVisitedShortlinks.dispatchEvent(new Event("change"))},1500));//check if visited shortlink is hide or not.
+        hideVisitedShortlinks=document.querySelector("div.shide").querySelector(".cwrapper");/checked/gi.test(hideVisitedShortlinks.innerHTML)||(setTimeout(()=>{hideVisitedShortlinks.click();hideVisitedShortlinks.dispatchEvent(new Event("change"))},2000));//check if visited shortlink is hide or not.
     function AutoUpdateDontOpen() {
         var AutoUpdateB = document.createElement("button"),
             AutoUpdate = document.getElementsByClassName('col item')[2].getElementsByClassName('content-box')[0];
