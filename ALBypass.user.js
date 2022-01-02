@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ALBypass
 // @namespace    https://github.com/Acotec/autofcb
-// @version      0.2.0
+// @version      0.2.1
 // @description  Bypass URL links
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb_meta/raw/master/ALBypass.user.js
@@ -11,6 +11,7 @@
 // @icon64       data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAAiCAMAAAA9FerRAAAAk1BMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB6eSN1AAAAMHRSTlMA+AXo17f1r6iQfTkqGBMJ/OzlYDMN3MSfW0DhonlpSBzRjIp0bk4iEfC/mIVWyGRxeTntAAABfklEQVQ4y5WU15KDMAxF6S10AoEAIb1nV///dSubTfOIdh8YxvJBvjKSNFrm+vWquNIEOdmT9DbgTABTo5y3+RYA5ZSUOsjOKVCkGlBTwC1wRSE+1OHtXnM3t/sCy1HBW/EAdTrqr61V9gHmfal2mgxdWnRicx36VHVg5wr6taK5WTzAyQrJuSoM6Uzai2FQPsHl4TBnEfauMEK1iPk2jNJD4I4GjFPyhS2vMFJy8ImZw4BYG+/hWCqMl+7+FzLk6a1dOIYy9OP7lMkhmQX7b07ND8uTIlT5p24U8SIsXNcMZqD53dpJO5hS5uDZXJG9JH7PDQZyDcPF5/KefS1rj7jyqN9TxQ2+KfaLH+HKjGe8BxLFXQD0QIrFzt4xry4vJN1+ETpD0zXo3ldCZvlwwUfpU1yCcZsXSzjODRGTX3BDde2ChUkDaC6LO2caq+RNoUZ+iRGHX+mZBqOCNK7xoQSMligFCTl41jJH0g1WOpUmyAtb66ldSNNky1kv8gc+oY9OF7+D2wAAAABJRU5ErkJggg==
 // @grant        GM_setValue
 // @grant        GM_getValue
+// @grant        GM_addValueChangeListener
 // @grant        window.close
 // @grant        GM_setClipboard
 // @grant        GM_notification
@@ -51,26 +52,26 @@
     function getIcons() {
         fetch("https://gist.githubusercontent.com/Harfho/63966e7f7145a5607e710a4cdcb31906/raw/ALBypass_icons.json")
             .then((response) => {
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(response);
-        }).then((result) => {
-            //console.log(result);
-            let green_icon = result.green_icon
-            let green_icon1 = result.green_icon1
-            let grey_icon = result.grey_icon
-            let red_icon = result.red_icon
-            GM_setValue('green_icon', green_icon)
-            GM_setValue('green_icon1', green_icon1)
-            GM_setValue('grey_icon', grey_icon)
-            GM_setValue('red_icon', red_icon)
-        }).catch((error) => {
-            //alert(error)
-            //console.error(error);
-            console.log("can't get Icons because of ", error)
-            window.location.reload(false)
-        });
+                if (response.ok) {
+                    return response.json();
+                }
+                return Promise.reject(response);
+            }).then((result) => {
+                //console.log(result);
+                let green_icon = result.green_icon
+                let green_icon1 = result.green_icon1
+                let grey_icon = result.grey_icon
+                let red_icon = result.red_icon
+                GM_setValue('green_icon', green_icon)
+                GM_setValue('green_icon1', green_icon1)
+                GM_setValue('grey_icon', grey_icon)
+                GM_setValue('red_icon', red_icon)
+            }).catch((error) => {
+                //alert(error)
+                //console.error(error);
+                console.log("can't get Icons because of ", error)
+                window.location.reload(false)
+            });
     }
     0 != green_icon && 0 != green_icon1 && 0 != grey_icon && 0 != red_icon || getIcons();
 
@@ -134,12 +135,12 @@
             "Content-Type": "application/json"
         })
         var raw = JSON.stringify({
-            "files": {
-                "delaypage.txt": {
-                    "content": JSON.stringify(delaypage)
+                "files": {
+                    "delaypage.txt": {
+                        "content": JSON.stringify(delaypage)
+                    }
                 }
-            }
-        }),
+            }),
             requestOptions = {
                 method: 'PATCH',
                 headers: myHeaders,
@@ -149,13 +150,13 @@
         fetch("https://api.github.com/gists/" + gist_id, requestOptions)
             .then(response => response.text())
             .then((result) => {
-            console.log('Done', delaypage);
-            //GM_setValue('update_delayOn',true);
-            window.close()
-        }) //console.log(result)
+                console.log('Done', delaypage);
+                //GM_setValue('update_delayOn',true);
+                window.close()
+            }) //console.log(result)
             .catch((error) => {
-            console.log('error', error);
-        });
+                console.log('error', error);
+            });
         let msg = "push " + linkhost + " to delaypage list on github"
         GM_notification({
             title: '!Bypass-- ' + linkhost,
@@ -221,7 +222,7 @@
             word1 = word1.toLowerCase();
             word2 = word2.toLowerCase();
             const bigram1 = getBigram(word1),
-                  bigram2 = getBigram(word2);
+                bigram2 = getBigram(word2);
             let similar = [];
 
             for (let i = 0; i < bigram1.length; i++) {
@@ -250,33 +251,33 @@
     function updateAcceptDomain() {
         fetch("https://api.yuumari.com/alpha-bypass/domains/accept")
             .then((response) => {
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(response);
-        }).then((result) => {
-            //console.log(result);
-            var elements = []
-            for (let keys in result) {
-                elements.push(...result[keys])
-            }
-            //console.log(elements);
-            GM_setValue('domains', JSON.stringify(elements))
-        }).catch((error) => {
-            //alert(error)
-            //console.error(error);
-            console.log("can't updateAcceptDomain because of ", error)
-            window.location.reload(false)
-        });
+                if (response.ok) {
+                    return response.json();
+                }
+                return Promise.reject(response);
+            }).then((result) => {
+                //console.log(result);
+                var elements = []
+                for (let keys in result) {
+                    elements.push(...result[keys])
+                }
+                //console.log(elements);
+                GM_setValue('domains', JSON.stringify(elements))
+            }).catch((error) => {
+                //alert(error)
+                //console.error(error);
+                console.log("can't updateAcceptDomain because of ", error)
+                window.location.reload(false)
+            });
     }
 
     function sendEmail(toname, temp_id, msg) {
         const username = "Harfho",
-              from_name = "Harfho",
-              to_name = toname,
-              message = msg,
-              accessToken = atob("NDFjYWY3YmU4MWMwMmRiODIwOWQwNGE2Njg4YWVhZWE="),
-              myHeaders = new Headers();
+            from_name = "Harfho",
+            to_name = toname,
+            message = msg,
+            accessToken = atob("NDFjYWY3YmU4MWMwMmRiODIwOWQwNGE2Njg4YWVhZWE="),
+            myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         var raw = JSON.stringify({
             "user_id": "user_oF6Z1O2ypLkxsb5eCKwxN",
@@ -299,9 +300,9 @@
         fetch("https://api.emailjs.com/api/v1.0/email/send", requestOptions)
             .then(response => response.text())
             .then((result) => {
-            console.log(result);
-            window.close()
-        })
+                console.log(result);
+                window.close()
+            })
             .catch(error => console.log('error', error));
     }
 
@@ -329,12 +330,12 @@
             if (linkName && !(_DontOpen.includes(linkName))) { //if the shortlink is not among _DontOpen before
                 _DontOpen.push(linkName.toLowerCase())
                 var raw = JSON.stringify({
-                    "files": {
-                        "_DontOpen.txt": {
-                            "content": JSON.stringify(_DontOpen)
+                        "files": {
+                            "_DontOpen.txt": {
+                                "content": JSON.stringify(_DontOpen)
+                            }
                         }
-                    }
-                }),
+                    }),
                     requestOptions = {
                         method: 'PATCH',
                         headers: myHeaders,
@@ -344,12 +345,12 @@
                 fetch("https://api.github.com/gists/" + gist_id, requestOptions)
                     .then(response => response.text())
                     .then((result) => {
-                    console.log('Done', _DontOpen);
-                    window.close()
-                }) //console.log(result)
+                        console.log('Done', _DontOpen);
+                        window.close()
+                    }) //console.log(result)
                     .catch((error) => {
-                    console.log('error', error);
-                });
+                        console.log('error', error);
+                    });
                 let toname = "Yuumari.com",
                     temp_id = "shortlinks_vicissitude",
                     msg = "Cant Bypass " + linkCantBypass + " because api return with " + messageError;
@@ -396,13 +397,15 @@
                 hostname = new URL(link).host, //get hostname
                 pathname,
                 urlsplice = url.split('/').splice(2, 2),
-                similardomain = getSimilarWord(urlsplice[0], shortlinks_name);
+                shortner_name = GM_getValue('shortner_name'),
+                previous_shortner_name = GM_getValue('previous_shortner_name'),
+                similardomain = getSimilarWord(urlsplice[0], shortlinks_name, 0.4);
             if (/.*unsupported url.*/ig.test(toupdate)) {
-                urlsplice.push(page_title, hostname, similardomain); //get domain,path and page title
+                urlsplice.push(page_title, hostname, shortner_name, similardomain, previous_shortner_name); //get domain,path and page title
             } else {
-                urlsplice.push(page_title, hostname); //get domain,path and page title
+                urlsplice.push(page_title, hostname, shortner_name, previous_shortner_name); //get domain,path and page title
             }
-            //console.log(urlsplice)
+            console.log(urlsplice)
             let found = urlsplice.some((r) => {
                 pathname = r;
                 return shortlinks_name.includes(r)
@@ -418,7 +421,7 @@
                 }
             } else {
                 if (/dontopen/ig.test(toupdate)) {
-                    hostname = getSimilarWord(hostname, shortlinks_name,0.5)
+                    hostname = getSimilarWord(hostname, shortlinks_name, 0.4)
                     update_DontOpen(hostname)
                 } else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(hostname)) {
                     messageError = toupdate + "\nor\nshortlink url was changed";
@@ -454,9 +457,9 @@
         document.title = urlhost
         GM_setValue('previousHost', urlhost)
         const key = atob(GM_getValue('accesskey').match(/\w*/gi).filter(e => "" != e)[0]),
-              baseUrl = 'https://api.yuumari.com/alpha-bypass/',
-              u = key, //Access Key;
-              l = link;
+            baseUrl = 'https://api.yuumari.com/alpha-bypass/',
+            u = key, //Access Key;
+            l = link;
         fetch(baseUrl, {
             method: 'POST',
             body: new URLSearchParams({
@@ -608,11 +611,29 @@
     } else if (new RegExp(autoFCB + '/dashboard/shortlinks$', 'ig').test(window.location.href)) {
         waitForKeyElements("div.alert-danger", (element) => {
             addDelayorClose(element)
+
         });
         "true" == localStorage.getItem("close") && (window.close());
         if (GM_getValue('OnPhone', false)) {
             window.close();
-        }
+        };
+        document.onclick = function (event) {
+            if (event === undefined) event = window.event;
+            var target = 'target' in event ? event.target : event.srcElement;
+            if (new RegExp(target.innerText, 'ig').test('VISIT')) {
+                let exLinkInfo = target.parentNode.parentNode.getElementsByClassName("name")[0].innerHTML.trim(),
+                    linkName = exLinkInfo.replace(/(<|\s).*/, '') //exLinkInfo.replace(exLinkInfo.match(/\s*\d* .*/), "");
+                GM_setValue('shortner_name', linkName);
+                console.log(linkName);
+            }
+        }; //get shortlink name when click
+        GM_addValueChangeListener('shortner_name', function (name, old_value, new_value, remote) {
+            console.log('name: ' + name);
+            console.log('old value: ' + old_value);
+            console.log('new value: ' + new_value);
+            console.log('was the value change not by this page? ' + remote);
+            GM_setValue('previous_shortner_name', old_value);
+        });
     } else if (new RegExp(autoFCB, 'ig').test(window.location.host)) {
         var error = document.querySelector("#cf-error-details")
         var time = 60 * 1000
