@@ -525,7 +525,7 @@
                         } else {
                             update_Accesskey()
                             setTimeout(() => {
-                                window.location.reload(false)
+                                window.close()
                             }, 5000)
                         }
                     } else if (/ticket.*locked/ig.test(message)) {
