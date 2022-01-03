@@ -70,7 +70,7 @@
                 //alert(error)
                 //console.error(error);
                 console.log("can't get Icons because of ", error)
-                window.location.reload(false)
+                window.location.reload(true)
             });
     }
     0 != green_icon && 0 != green_icon1 && 0 != grey_icon && 0 != red_icon || getIcons();
@@ -191,9 +191,6 @@
             }
         } else {
             window.close();
-            window.close();
-            window.close();
-            window.close()
         }
     }
 
@@ -267,7 +264,7 @@
                 //alert(error)
                 //console.error(error);
                 console.log("can't updateAcceptDomain because of ", error)
-                window.location.reload(false)
+                window.location.reload(true)
             });
     }
 
@@ -399,17 +396,18 @@
                 urlsplice = url.split('/').splice(2, 2),
                 shortner_name = GM_getValue('shortner_name'),
                 previous_shortner_name = GM_getValue('previous_shortner_name'),
-                similardomain = getSimilarWord(urlsplice[0], shortlinks_name, 0.4);
+                similardomain = getSimilarWord(urlsplice[0], shortlinks_name);
             if (/.*unsupported url.*/ig.test(toupdate)) {
                 urlsplice.push(page_title, hostname, shortner_name, similardomain, previous_shortner_name); //get domain,path and page title
             } else {
                 urlsplice.push(page_title, hostname, shortner_name, previous_shortner_name); //get domain,path and page title
             }
-            console.log(urlsplice)
+            //console.log(urlsplice)
             let found = urlsplice.some((r) => {
                 pathname = r;
                 return shortlinks_name.includes(r)
             })
+
             if (found) {
                 if (/.*dontopen.*/ig.test(toupdate)) {
                     pathname = getSimilarWord(pathname, shortlinks_name)
@@ -504,7 +502,7 @@
                 if (parseInt(tryagain) <= retry) {
                     sessionStorage.setItem('tryagain', parseInt(tryagain) + 1);
                     setTimeout(() => {
-                        window.location.reload(false)
+                        window.location.reload(true)
                     }, 2000)
                 } else { //can't bypass the link after retrying
                     let urlhost = new URL(l).host
@@ -519,7 +517,7 @@
                         if (GM_getValue('AllowToSendEmail', false)) {
                             let toname = "Harfho",
                                 temp_id = "api_issue",
-                                msg = message + " Get New API key previous api key as expired";
+                                msg = message + "==Get New API key previous api key as expired";
                             update_Accesskey()
                             sendEmail(toname, temp_id, msg)
                         } else {
@@ -543,7 +541,7 @@
                         let msg = message + "The limit on the number of requests has exceeded 2 queries per 1sec."
                         console.log(msg)
                         setTimeout(() => {
-                            window.location.reload(false)
+                            window.location.reload(true)
                         }, 1000)
                     } else {
                         let msg = message + "--" + link
@@ -576,7 +574,7 @@
             }
             if (parseInt(recheck) <= retry) {
                 sessionStorage.setItem('recheck', parseInt(recheck) + 1);
-                setTimeout(window.location.reload(false), 5000)
+                setTimeout(window.location.reload(true), 5000)
             } else {
                 favicon(red_icon)
                 document.title = error + ":" + new URL(link).host
@@ -628,19 +626,19 @@
             }
         }; //get shortlink name when click
         GM_addValueChangeListener('shortner_name', function (name, old_value, new_value, remote) {
-            console.log('name: ' + name);
-            console.log('old value: ' + old_value);
-            console.log('new value: ' + new_value);
-            console.log('was the value change not by this page? ' + remote);
-            GM_setValue('previous_shortner_name', old_value);
+            GM_setValue('shortner_name', new_value)
+            GM_setValue('previous_shortner_name', old_value)
         });
     } else if (new RegExp(autoFCB, 'ig').test(window.location.host)) {
-        var error = document.querySelector("#cf-error-details")
-        var time = 60 * 1000
-        if (error && /Error 5../ig.test(error.innerText)) {
-            document.title = 'R-' + document.title
-            window.setTimeout(window.location.reload(false), time)
-        }
+        try {
+            var error = document.querySelector("#cf-error-details"),
+                error1 = document.querySelector("center:nth-child(1)"),
+                time = 60 * 1000;
+            if ((error || error1) && (/Error 5../ig.test(error.innerText) || /503 Service Temporarily/ig.test(error1.innerText))) {
+                document.title = 'R-' + document.title
+                window.setTimeout(window.location.reload(true), time)
+            }
+        } catch (e) {}
     } else {
         favicon(grey_icon)
         let link = window.location.href
@@ -648,7 +646,7 @@
             updateAcceptDomain();
             GM_setValue('updateAcceptDomain', false);
             setTimeout(() => {
-                window.location.reload()
+                window.location.reload(true)
             }, 3000)
         } else if (GM_getValue('updateAcceptDomain') == false) {
             getDomainOrPathNameAndUpdate(link, 'unsupported url');
