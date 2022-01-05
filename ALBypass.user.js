@@ -396,7 +396,7 @@
                 urlsplice = url.split('/').splice(2, 2),
                 shortner_name = GM_getValue('shortner_name'),
                 previous_shortner_name = GM_getValue('previous_shortner_name'),
-                similardomain = getSimilarWord(urlsplice[0], shortlinks_name);
+                similardomain = getSimilarWord(urlsplice[0], shortlinks_name, 0.4);
             if (/.*unsupported url.*/ig.test(toupdate)) {
                 urlsplice.push(page_title, hostname, shortner_name, similardomain, previous_shortner_name); //get domain,path and page title
             } else {
@@ -405,9 +405,8 @@
             //console.log(urlsplice)
             let found = urlsplice.some((r) => {
                 pathname = r;
-                return shortlinks_name.includes(r)
+                return shortlinks_name.includes(r.toLowerCase())
             })
-
             if (found) {
                 if (/.*dontopen.*/ig.test(toupdate)) {
                     pathname = getSimilarWord(pathname, shortlinks_name)
@@ -607,6 +606,10 @@
         localStorage.removeItem("close");
         localStorage.clear();
     } else if (new RegExp(autoFCB + '/dashboard/shortlinks$', 'ig').test(window.location.href)) {
+        GM_addValueChangeListener('shortner_name', function (name, old_value, new_value, remote) {
+            GM_setValue('shortner_name', new_value)
+            GM_setValue('previous_shortner_name', old_value)
+        });
         waitForKeyElements("div.alert-danger", (element) => {
             addDelayorClose(element)
 
@@ -625,10 +628,6 @@
                 console.log(linkName);
             }
         }; //get shortlink name when click
-        GM_addValueChangeListener('shortner_name', function (name, old_value, new_value, remote) {
-            GM_setValue('shortner_name', new_value)
-            GM_setValue('previous_shortner_name', old_value)
-        });
     } else if (new RegExp(autoFCB, 'ig').test(window.location.host)) {
         try {
             var error = document.querySelector("#cf-error-details"),
