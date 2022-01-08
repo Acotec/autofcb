@@ -52,26 +52,26 @@
     function getIcons() {
         fetch("https://gist.githubusercontent.com/Harfho/63966e7f7145a5607e710a4cdcb31906/raw/ALBypass_icons.json")
             .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                return Promise.reject(response);
-            }).then((result) => {
-                //console.log(result);
-                let green_icon = result.green_icon
-                let green_icon1 = result.green_icon1
-                let grey_icon = result.grey_icon
-                let red_icon = result.red_icon
-                GM_setValue('green_icon', green_icon)
-                GM_setValue('green_icon1', green_icon1)
-                GM_setValue('grey_icon', grey_icon)
-                GM_setValue('red_icon', red_icon)
-            }).catch((error) => {
-                //alert(error)
-                //console.error(error);
-                console.log("can't get Icons because of ", error)
-                window.location.reload(true)
-            });
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        }).then((result) => {
+            //console.log(result);
+            let green_icon = result.green_icon
+            let green_icon1 = result.green_icon1
+            let grey_icon = result.grey_icon
+            let red_icon = result.red_icon
+            GM_setValue('green_icon', green_icon)
+            GM_setValue('green_icon1', green_icon1)
+            GM_setValue('grey_icon', grey_icon)
+            GM_setValue('red_icon', red_icon)
+        }).catch((error) => {
+            //alert(error)
+            //console.error(error);
+            console.log("can't get Icons because of ", error)
+            window.location.reload(true)
+        });
     }
     0 != green_icon && 0 != green_icon1 && 0 != grey_icon && 0 != red_icon || getIcons();
 
@@ -135,12 +135,12 @@
             "Content-Type": "application/json"
         })
         var raw = JSON.stringify({
-                "files": {
-                    "delaypage.txt": {
-                        "content": JSON.stringify(delaypage)
-                    }
+            "files": {
+                "delaypage.txt": {
+                    "content": JSON.stringify(delaypage)
                 }
-            }),
+            }
+        }),
             requestOptions = {
                 method: 'PATCH',
                 headers: myHeaders,
@@ -150,13 +150,13 @@
         fetch("https://api.github.com/gists/" + gist_id, requestOptions)
             .then(response => response.text())
             .then((result) => {
-                console.log('Done', delaypage);
-                //GM_setValue('update_delayOn',true);
-                window.close()
-            }) //console.log(result)
+            console.log('Done', delaypage);
+            //GM_setValue('update_delayOn',true);
+            window.close()
+        }) //console.log(result)
             .catch((error) => {
-                console.log('error', error);
-            });
+            console.log('error', error);
+        });
         let msg = "push " + linkhost + " to delaypage list on github"
         GM_notification({
             title: '!Bypass-- ' + linkhost,
@@ -225,7 +225,7 @@
             word1 = word1.toLowerCase();
             word2 = word2.toLowerCase();
             const bigram1 = getBigram(word1),
-                bigram2 = getBigram(word2);
+                  bigram2 = getBigram(word2);
             let similar = [];
 
             for (let i = 0; i < bigram1.length; i++) {
@@ -254,33 +254,33 @@
     function updateAcceptDomain() {
         fetch("https://api.yuumari.com/alpha-bypass/domains/accept")
             .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                return Promise.reject(response);
-            }).then((result) => {
-                //console.log(result);
-                var elements = []
-                for (let keys in result) {
-                    elements.push(...result[keys])
-                }
-                //console.log(elements);
-                GM_setValue('domains', JSON.stringify(elements))
-            }).catch((error) => {
-                //alert(error)
-                //console.error(error);
-                console.log("can't updateAcceptDomain because of ", error)
-                window.location.reload(true)
-            });
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        }).then((result) => {
+            //console.log(result);
+            var elements = []
+            for (let keys in result) {
+                elements.push(...result[keys])
+            }
+            //console.log(elements);
+            GM_setValue('domains', JSON.stringify(elements))
+        }).catch((error) => {
+            //alert(error)
+            //console.error(error);
+            console.log("can't updateAcceptDomain because of ", error)
+            window.location.reload(true)
+        });
     }
 
     function sendEmail(toname, temp_id, msg) {
         const username = "Harfho",
-            from_name = "Harfho",
-            to_name = toname,
-            message = msg,
-            accessToken = atob("NDFjYWY3YmU4MWMwMmRiODIwOWQwNGE2Njg4YWVhZWE="),
-            myHeaders = new Headers();
+              from_name = "Harfho",
+              to_name = toname,
+              message = msg,
+              accessToken = atob("NDFjYWY3YmU4MWMwMmRiODIwOWQwNGE2Njg4YWVhZWE="),
+              myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         var raw = JSON.stringify({
             "user_id": "user_oF6Z1O2ypLkxsb5eCKwxN",
@@ -303,9 +303,9 @@
         fetch("https://api.emailjs.com/api/v1.0/email/send", requestOptions)
             .then(response => response.text())
             .then((result) => {
-                console.log(result);
-                window.close()
-            })
+            console.log(result);
+            window.close()
+        })
             .catch(error => console.log('error', error));
     }
 
@@ -333,12 +333,12 @@
             if (linkName && !(_DontOpen.includes(linkName))) { //if the shortlink is not among _DontOpen before
                 _DontOpen.push(linkName.toLowerCase())
                 var raw = JSON.stringify({
-                        "files": {
-                            "_DontOpen.txt": {
-                                "content": JSON.stringify(_DontOpen)
-                            }
+                    "files": {
+                        "_DontOpen.txt": {
+                            "content": JSON.stringify(_DontOpen)
                         }
-                    }),
+                    }
+                }),
                     requestOptions = {
                         method: 'PATCH',
                         headers: myHeaders,
@@ -348,12 +348,12 @@
                 fetch("https://api.github.com/gists/" + gist_id, requestOptions)
                     .then(response => response.text())
                     .then((result) => {
-                        console.log('Done', _DontOpen);
-                        window.close()
-                    }) //console.log(result)
+                    console.log('Done', _DontOpen);
+                    window.close()
+                }) //console.log(result)
                     .catch((error) => {
-                        console.log('error', error);
-                    });
+                    console.log('error', error);
+                });
                 let toname = "Yuumari.com",
                     temp_id = "shortlinks_vicissitude",
                     msg = "Cant Bypass " + linkCantBypass + " because api return with " + messageError;
@@ -460,9 +460,9 @@
         document.title = urlhost
         GM_setValue('previousHost', urlhost)
         const key = atob(GM_getValue('accesskey').match(/\w*/gi).filter(e => "" != e)[0]),
-            baseUrl = 'https://api.yuumari.com/alpha-bypass/',
-            u = key, //Access Key;
-            l = link;
+              baseUrl = 'https://api.yuumari.com/alpha-bypass/',
+              u = key, //Access Key;
+              l = link;
         fetch(baseUrl, {
             method: 'POST',
             body: new URLSearchParams({
@@ -547,8 +547,7 @@
                         } else {
                             GM_setValue('already_sent', false)
                             console.log(message + "You have use more than 2 IPs to access Yuumari.com,Wait for 24Hour '(" + after24h + ")' for API key to continue working")
-                            console.log(GM_getValue("after24h"))
-                            //window.close()
+                            window.close()
                         }
                     } else if (/leeched max count/ig.test(message)) {
                         let msg = message + "The limit on the number of requests has exceeded 2 queries per 1sec."
