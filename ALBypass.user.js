@@ -320,7 +320,7 @@
 
         function getDontOpen(response) {
             let getDontOpen = response.responseText.replace(/'|"|\[|\]/ig, '').split(',').filter(e => e);
-            var _DontOpen = getDontOpen.map(item => item.replace(/'/ig, '"').toLowerCase()).sort()
+            var _DontOpen = getDontOpen.map(item => item.replace(/'/ig, '"').toLowerCase())
             //console..log(_DontOpen,linkName)
             var access_token = atob('Z2hwXzFVMGhPMTFodTZ6eWxaZ0hMWW5qWFdMTjE1d3V5NjBZN0l6Rw==') //github access gist-Token
             access_token = "Bearer " + access_token
@@ -414,6 +414,7 @@
                 return shortlinks_name.includes(r.toLowerCase())
             })
             if (found) {
+                pathname = pathname.toLowerCase()
                 if (/.*dontopen.*/ig.test(toupdate)) {
                     pathname = getSimilarWord(pathname, shortlinks_name)
                     update_DontOpen(pathname)
@@ -423,6 +424,7 @@
                     update_DontOpen(pathname)
                 }
             } else {
+                hostname=hostname.toLowerCase()
                 if (/dontopen/ig.test(toupdate)) {
                     hostname = getSimilarWord(hostname, shortlinks_name, 0.4)
                     update_DontOpen(hostname)
@@ -669,7 +671,7 @@
             updateAcceptDomain();
             GM_setValue('updateAcceptDomain', false);
             setTimeout(() => {
-                window.location.reload(true)
+                window.close()
             }, 3000)
         } else if (GM_getValue('updateAcceptDomain') == false) {
             getDomainOrPathNameAndUpdate(link, 'unsupported url');
