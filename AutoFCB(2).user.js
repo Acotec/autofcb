@@ -168,7 +168,8 @@
                 url: 'https://gist.github.com/Harfho/'+gist_id+'/raw/shortlinks_name.txt?timestamp=' + (+new Date()),
                 fetch: true,
                 nocache: false,
-                onload: get_Shortlinks_and_DontOpen
+                onload: get_Shortlinks_and_DontOpen,
+                onerror:(r)=>{window.location.reload()}
             })
 
             function get_Shortlinks_and_DontOpen(response) {
@@ -180,7 +181,8 @@
                     url: 'https://gist.github.com/Harfho/'+gist_id+'/raw/_DontOpen.txt?timestamp=' + (+new Date()),
                     fetch: true,
                     nocache: false,
-                    onload: Runcode
+                    onload: Runcode,
+                    onerror:(r)=>{window.location.reload()}
                 });
             }
         } else {
