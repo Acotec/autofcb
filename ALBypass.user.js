@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ALBypass
 // @namespace    https://github.com/Acotec/autofcb
-// @version      0.2.1
+// @version      0.2.2
 // @description  Bypass URL links
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb_meta/raw/master/ALBypass.user.js
@@ -44,7 +44,7 @@
         grey_icon = GM_getValue('grey_icon', ''),
         red_icon = GM_getValue('red_icon', ''),
         autoFCB = 'auto(faucet|claim|bitco).(in|org)',
-        gist_id = 'e6ed9bbe9feb74e71030c680feba9d71',
+        gist_id = '8f5a3bd519f0ebf94708ad624ffd76d2',
         delayOn = GM_getValue("delayOn", "[]"),
         update_delayOn = GM_getValue('update_delayOn', true);
     delayOn = JSON.parse(delayOn);
