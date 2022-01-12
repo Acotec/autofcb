@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoFCB(2)
 // @namespace    https://github.com/Acotec/autofcb
-// @version      2.1.16
+// @version      2.1.17
 // @description  AutomateButtons
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb_meta/raw/master/AutoFCB(2).user.js
@@ -10,8 +10,8 @@
 // @connect      gist.github.com
 // @connect      gist.githubusercontent.com
 // @connect      api.github.com
-// @resource     _DontOpen https://gist.githubusercontent.com/Harfho/e6ed9bbe9feb74e71030c680feba9d71/raw/_DontOpen.txt
-// @resource     shortlinks_name https://gist.githubusercontent.com/Harfho/e6ed9bbe9feb74e71030c680feba9d71/raw/shortlinks_name.txt
+// @resource     _DontOpen https://gist.githubusercontent.com/Harfho/8f5a3bd519f0ebf94708ad624ffd76d2/raw/_DontOpen.txt
+// @resource     shortlinks_name https://gist.githubusercontent.com/Harfho/8f5a3bd519f0ebf94708ad624ffd76d2/raw/shortlinks_name.txt
 // @include      *auto*/shortlinks
 // @include      *auto*/shortlinks?*
 // @noframes
@@ -36,7 +36,7 @@
         _order_ByName = [],
         button = document.createElement("button"),
         body = document.getElementsByClassName('col item')[1].getElementsByClassName('content-box')[0],
-        gist_id="e6ed9bbe9feb74e71030c680feba9d71",
+        gist_id="8f5a3bd519f0ebf94708ad624ffd76d2",
         hideVisitedShortlinks=document.querySelector("div.shide").querySelector(".cwrapper");/checked/gi.test(hideVisitedShortlinks.innerHTML)||(setTimeout(()=>{hideVisitedShortlinks.click();hideVisitedShortlinks.dispatchEvent(new Event("change"))},2000));//check if visited shortlink is hide or not.
     function AutoUpdateDontOpen() {
         var AutoUpdateB = document.createElement("button"),
@@ -168,8 +168,7 @@
                 url: 'https://gist.github.com/Harfho/'+gist_id+'/raw/shortlinks_name.txt?timestamp=' + (+new Date()),
                 fetch: true,
                 nocache: false,
-                onload: get_Shortlinks_and_DontOpen,
-                onerror:(r)=>{window.location.reload()}
+                onload: get_Shortlinks_and_DontOpen
             })
 
             function get_Shortlinks_and_DontOpen(response) {
@@ -181,8 +180,7 @@
                     url: 'https://gist.github.com/Harfho/'+gist_id+'/raw/_DontOpen.txt?timestamp=' + (+new Date()),
                     fetch: true,
                     nocache: false,
-                    onload: Runcode,
-                    onerror:(r)=>{window.location.reload()}
+                    onload: Runcode
                 });
             }
         } else {
