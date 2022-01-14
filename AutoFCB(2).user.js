@@ -297,7 +297,7 @@
 
         function DontOpen_LinkByName(linkName) {
             let check = _DontOpen.some((link) => {
-                return new RegExp('^'+link, "ig").test(linkName)
+                return new RegExp('^'+link+'$', "ig").test(linkName)
             }) //check if linkName is among _DontOpen
             if (check) {
                 //alert('Dontopen '+linkName)
