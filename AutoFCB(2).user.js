@@ -23,7 +23,7 @@
 // @grant        GM_xmlhttpRequest
 //// @require      https://github.com/Acotec/autofcb_script/raw/master/AutoFCB(2).user.js
 // ==/UserScript==
-(function() {
+(function () {
     var _DontOpen = GM_getResourceText("_DontOpen").replace(/'|"|\[|\]|\s/ig, '').split(',').filter(e => e),
         shortlinks_name = GM_getResourceText("shortlinks_name").replace(/'|"|\[|\]|\s/ig, '').split(',').filter(e => e),
         _open_link_fast = [].map(e => e.toLowerCase()),
@@ -36,14 +36,21 @@
         _order_ByName = [],
         button = document.createElement("button"),
         body = document.getElementsByClassName('col item')[1].getElementsByClassName('content-box')[0],
-        gist_id="8f5a3bd519f0ebf94708ad624ffd76d2",
-        hideVisitedShortlinks=document.querySelector("div.shide").querySelector(".cwrapper");/checked/gi.test(hideVisitedShortlinks.innerHTML)||(setTimeout(()=>{hideVisitedShortlinks.click();hideVisitedShortlinks.dispatchEvent(new Event("change"))},2000));//check if visited shortlink is hide or not.
+        gist_id = "8f5a3bd519f0ebf94708ad624ffd76d2",
+        hideVisitedShortlinks = document.querySelector("div.shide").querySelector(".cwrapper");
+    /checked/gi.test(hideVisitedShortlinks.innerHTML) || (setTimeout(() => {
+        hideVisitedShortlinks.click();
+        hideVisitedShortlinks.dispatchEvent(new Event("change"))
+    }, 2000)); //check if visited shortlink is hide or not.
     function AutoUpdateDontOpen() {
         var AutoUpdateB = document.createElement("button"),
             AutoUpdate = document.getElementsByClassName('col item')[2].getElementsByClassName('content-box')[0];
         AutoUpdate.appendChild(AutoUpdateB);
+        if (GM_getValue("AutoUpdate", false) == false) {
+            GM_setValue("AutoUpdate", true)
+        }
         try {
-            if (GM_getValue("AutoUpdate")) {
+            if (GM_getValue("AutoUpdate", true)) {
                 AutoUpdateB.innerHTML = 'AutoUpdate_ON';
                 AutoUpdateB.style = "background-color:Violet;color:white"
             } else {
@@ -51,7 +58,7 @@
                 AutoUpdateB.innerHTML = 'AutoUpdate_OFF';
                 AutoUpdateB.style = "background-color:black;color:white"
             }
-            AutoUpdateB.addEventListener('click', function(e) {
+            AutoUpdateB.addEventListener('click', function (e) {
                 if (GM_getValue("AutoUpdate", true)) {
                     GM_setValue("AutoUpdate", false);
                     AutoUpdateB.innerHTML = 'AutoUpdate_OFF';
@@ -83,10 +90,13 @@
 
     function static_speed() {
         let staticB = document.createElement("button"),
-            static =document.getElementsByClassName('col item')[0].getElementsByClassName('content-box')[0];
+            static = document.getElementsByClassName('col item')[0].getElementsByClassName('content-box')[0];
         static.appendChild(staticB);
+        if (GM_getValue("static", false) == false) {
+            GM_setValue("static", true)
+        }
         try {
-            if (GM_getValue("static")) {
+            if (GM_getValue("static", true)) {
                 staticB.innerHTML = 'Static_ON';
                 staticB.style = "background-color:Violet;color:white"
             } else {
@@ -94,7 +104,7 @@
                 staticB.innerHTML = 'Static_OFF';
                 staticB.style = "background-color:black;color:white"
             }
-            staticB.addEventListener('click', function(e) {
+            staticB.addEventListener('click', function (e) {
                 if (GM_getValue("static", true)) {
                     GM_setValue("static", false);
                     staticB.innerHTML = 'Static_OFF';
@@ -107,6 +117,7 @@
             });
         } catch (err) {}
     }
+
     function SpeedCtr() {
         var speed = GM_getValue('speed', 0.1); //the duration speed
         "undefined" != String(speed) && "NaN" != String(speed) && "null" != String(GM_getValue(speed)) || GM_setValue("speed", 0.1);
@@ -120,12 +131,12 @@
         speed_sub.innerHTML = 'speed -'
         body1.appendChild(dis);
         dis.innerHTML = 'DS - ' + speed + ' Seconds' //DS=default Speed
-        speed_add.addEventListener("click", function() {
+        speed_add.addEventListener("click", function () {
             speed = parseFloat((speed + 0.01).toFixed(2))
             GM_setValue("speed", speed);
             dis.innerHTML = 'CS - ' + GM_getValue('speed') + ' Seconds' // CS = current setSpeed
         })
-        speed_sub.addEventListener("click", function() {
+        speed_sub.addEventListener("click", function () {
             if (!(GM_getValue('speed') < 0.05)) {
                 speed = parseFloat((speed - 0.01).toFixed(2))
                 GM_setValue("speed", speed);
@@ -136,7 +147,7 @@
     }
 
     function DelayShort() {
-        var ShortDelayButton = document.createElement("button"),//create button to enable/disable the Delay of some shortlink b4 they open
+        var ShortDelayButton = document.createElement("button"), //create button to enable/disable the Delay of some shortlink b4 they open
             ShortDelay = document.getElementsByClassName("shortlinks")[0]; //Append somewhere
         ShortDelay.appendChild(ShortDelayButton)
         try {
@@ -146,7 +157,7 @@
                 GM_setValue("delayShort", false)
                 ShortDelayButton.innerHTML = 'Dnt_Delay';
             }
-            ShortDelayButton.addEventListener('click', function(e) {
+            ShortDelayButton.addEventListener('click', function (e) {
                 if (GM_getValue("delayShort", true)) {
                     GM_setValue("delayShort", false);
                     ShortDelayButton.innerHTML = 'Dnt_Delay';
@@ -165,10 +176,11 @@
         if (GM_getValue("AutoUpdate")) {
             GM_xmlhttpRequest({
                 method: 'GET',
-                url: 'https://gist.github.com/Harfho/'+gist_id+'/raw/shortlinks_name.txt?timestamp=' + (+new Date()),
-                fetch: true,
+                url: 'https://gist.github.com/Harfho/' + gist_id + '/raw/shortlinks_name.txt?timestamp=' + (+new Date()),
+                fetch: false,
                 nocache: false,
-                onload: get_Shortlinks_and_DontOpen
+                onload: get_Shortlinks_and_DontOpen,
+                onerror: window.location.reload
             })
 
             function get_Shortlinks_and_DontOpen(response) {
@@ -177,10 +189,11 @@
                 //console.log(shortlinks_name)
                 GM_xmlhttpRequest({
                     method: 'GET',
-                    url: 'https://gist.github.com/Harfho/'+gist_id+'/raw/_DontOpen.txt?timestamp=' + (+new Date()),
-                    fetch: true,
+                    url: 'https://gist.github.com/Harfho/' + gist_id + '/raw/_DontOpen.txt?timestamp=' + (+new Date()),
+                    fetch: false,
                     nocache: false,
-                    onload: Runcode
+                    onload: Runcode,
+                    onerror: window.location.reload
                 });
             }
         } else {
@@ -191,10 +204,9 @@
         body.appendChild(button);
         button.innerHTML = "Script Not Running -- SHORTLINKS=" + _views_ToVisit.length;
         DelayShort()
-        button.addEventListener("click", function() {
+        button.addEventListener("click", function () {
             checkButton()
         });
-
     }
 
     function Runcode(response = null) {
@@ -217,7 +229,13 @@
         } else {
             _totalLink = _views_ToVisit.length;
         }
-
+        if (/404|400/ig.test(_DontOpen + shortlinks_name)) {
+            window.location.reload();
+            throw new Error("!! Stop JS")
+        } else {
+            //console.log(_DontOpen)
+            //console.log(shortlinks_name)
+        }
         //function to check when the page is reloaded
         function pageR() {
             //reload
@@ -297,7 +315,7 @@
 
         function DontOpen_LinkByName(linkName) {
             let check = _DontOpen.some((link) => {
-                return new RegExp('^'+link+'$', "ig").test(linkName)
+                return new RegExp('^' + link + '$', "ig").test(linkName)
             }) //check if linkName is among _DontOpen
             if (check) {
                 //alert('Dontopen '+linkName)
@@ -310,7 +328,8 @@
         function update_DontOpen(linkName) {
             _DontOpen.push(linkName.toLowerCase())
             shortlinks_name.push(linkName)
-            var access_token = atob('Z2hwXzFVMGhPMTFodTZ6eWxaZ0hMWW5qWFdMTjE1d3V5NjBZN0l6Rw==') //get access_token and de_encrpt it btoa to atob
+            var access_token = atob('Z2hwXzFVMGhPMTFodTZ6eWxaZ0hMWW5qWFdMTjE1d3V5NjBZN0l6Rw=='), //get access_token and de_encrpt it btoa to atob
+                discription = window.location.host + " added " + linkName + " to _DontOpen and shortlinks_name"
             access_token = "Bearer " + access_token
             //console.log(access_token)
             const myHeaders = new Headers({
@@ -319,12 +338,13 @@
                 "Content-Type": "application/json"
             })
             var raw = JSON.stringify({
+                "description": discription,
                 "files": {
-                    "_DontOpen.txt": {
-                        "content": JSON.stringify(_DontOpen)
-                    },
                     "shortlinks_name.txt": {
                         "content": JSON.stringify(shortlinks_name)
+                    },
+                    "_DontOpen.txt": {
+                        "content": JSON.stringify(_DontOpen)
                     }
                 }
             });
@@ -335,9 +355,9 @@
                 redirect: 'follow'
             };
 
-            fetch("https://api.github.com/gists/"+gist_id, requestOptions)
+            fetch("https://api.github.com/gists/" + gist_id, requestOptions)
                 .then(response => response.text())
-                .then(result => console.log(_DontOpen)) //console.log(result)
+                .then(result => console.log(discription)) //console.log(result)
                 .catch(error => console.log('error', error));
         }
 
@@ -348,7 +368,7 @@
                     let _getlink = _ordered_LinkToVisitOnPage.splice(0, 1)[0],
                         open_link = _getlink.parentNode.parentNode.parentNode.querySelector("button"),
                         exLinkInfo = _getlink.parentNode.parentNode.getElementsByClassName("name")[0].innerHTML.trim(),
-                        linkName = exLinkInfo.replace(/(<|\s).*/,'')//exLinkInfo.replace(exLinkInfo.match(/\s*\d* .*/), "");
+                        linkName = exLinkInfo.replace(/(<|\s).*/, '') //exLinkInfo.replace(exLinkInfo.match(/\s*\d* .*/), "");
                     if (_available_link <= 1000) {
                         _getlink = _getlink.textContent;
                         let exFirstNum = _getlink.match(/\/\d*/)[0],
@@ -362,15 +382,27 @@
                             if (shortlinks_name.includes(linkName.toLowerCase())) {
                                 //console.log(linkName)
                                 i++; //increment the index
-                                if(GM_getValue("use_static",'')&&GM_getValue("static")){
-                                    var time = new Date();time.toLocaleString('en-US', { hour: 'numeric', hour12: true }).replace(/\s+/ig,'')
-                                    if(/(12|0[0-8]|[1-8])am/ig.test(time)){duration = 2*1000}//time is around 12am-8am
-                                    else if(/(9|1[0-1])am/ig.test(time)){duration = 5*1000}//time is around 9am-11am
-                                    else if(/(12|(0|1[0-9]|[1-9]))pm/ig.test(time)){duration = 10*1000}//time is around 12pm-11pm
-                                    else{duration = 5*1000}
+                                if (GM_getValue("use_static", '') && GM_getValue("static")) {
+                                    var time = new Date();
+                                    time.toLocaleString('en-US', {
+                                        hour: 'numeric',
+                                        hour12: true
+                                    }).replace(/\s+/ig, '')
+                                    if (/(12|0[0-8]|[1-8])am/ig.test(time)) {
+                                        duration = 1 * 1000
+                                    } //time is around 12am-8am
+                                    else if (/(9|1[0-1])am/ig.test(time)) {
+                                        duration = 3 * 1000
+                                    } //time is around 9am-11am
+                                    else if (/(12|(0|1[0-9]|[1-9]))pm/ig.test(time)) {
+                                        duration = 5 * 1000
+                                    } //time is around 12pm-11pm
+                                    else {
+                                        duration = 3 * 1000
+                                    }
                                 } else {
                                     duration = i * GM_getValue('speed') * 1000
-                                    GM_setValue("use_static",true)
+                                    GM_setValue("use_static", true)
                                 }
                                 //console.log(i)
                                 var inter = setInterval(() => {
@@ -382,11 +414,10 @@
                                         appear() // re-run
                                     }
                                 }, duration)
+                                } else {
+                                    console.log(linkName.toLowerCase(), 'Is not among shortlinks to open')
+                                    update_DontOpen(linkName)
                                 }
-                            else {
-                                console.log(linkName.toLowerCase(), 'Is not among shortlinks to open')
-                                update_DontOpen(linkName)
-                            }
 
                         }
                     } //end
@@ -414,7 +445,7 @@
                     //console.log('Done opening')
                     button.innerHTML = 'Done opening-Click to Run Again'
                     clearInterval(interval)
-                    GM_setValue("use_static",false)
+                    GM_setValue("use_static", false)
                     Re_run()
                     //window.close();//window.close()
                 }
@@ -434,7 +465,7 @@
         }
         body.appendChild(button);
         // Add event handler
-        button.addEventListener("click", function() {
+        button.addEventListener("click", function () {
             checkButton()
         });
         //////////////////
