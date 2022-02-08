@@ -446,7 +446,7 @@
                             //console.log('Shortlink Among Dont Open')
                             limit++
                         } else {
-                            open_link.click()
+                            clickOnEle(open_link)
                             //console.log('b', linkName)
                         }
                     } //end
