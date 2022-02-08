@@ -360,7 +360,25 @@
                 .then(result => console.log(discription)) //console.log(result)
                 .catch(error => console.log('error', error));
         }
-
+        function clickOnEle(el){
+            var simulateMouseEvent = function(element, eventName, coordX, coordY) {
+                element.dispatchEvent(new MouseEvent(eventName, {
+                    //view: window,
+                    bubbles: true,
+                    cancelable: true,
+                    clientX: coordX,
+                    clientY: coordY,
+                    button: 0
+                }));
+            };
+            var theButton = el;
+            var box = theButton.getBoundingClientRect(),
+                coordX = box.left + (box.right - box.left) / 2,
+                coordY = box.top + (box.bottom - box.top) / 2;
+            simulateMouseEvent (theButton, "mousedown", coordX, coordY);
+            simulateMouseEvent (theButton, "mouseup", coordX, coordY);
+            simulateMouseEvent (theButton, "click", coordX, coordY);
+        }
         function appear() { //define a function
             let limit = _ordered_LinkToVisitOnPage.length
             interval = setInterval(() => {
@@ -384,7 +402,7 @@
                                 i++; //increment the index
                                 if (GM_getValue("use_static", '') && GM_getValue("static")) {
                                     var time = new Date();
-                                    time.toLocaleString('en-US', {
+                                    time = time.toLocaleString('en-US', {
                                         hour: 'numeric',
                                         hour12: true
                                     }).replace(/\s+/ig, '')
@@ -392,13 +410,13 @@
                                         duration = 1 * 1000
                                     } //time is around 12am-8am
                                     else if (/(9|1[0-1])am/ig.test(time)) {
-                                        duration = 3 * 1000
+                                        duration = 5 * 1000
                                     } //time is around 9am-11am
                                     else if (/(12|(0|1[0-9]|[1-9]))pm/ig.test(time)) {
-                                        duration = 5 * 1000
+                                        duration = 10 * 1000
                                     } //time is around 12pm-11pm
                                     else {
-                                        duration = 3 * 1000
+                                        duration = 5 * 1000
                                     }
                                 } else {
                                     duration = i * GM_getValue('speed') * 1000
@@ -408,7 +426,7 @@
                                 var inter = setInterval(() => {
                                     views_left--
                                     if (views_left >= 0) {
-                                        open_link.click()
+                                        clickOnEle(open_link)
                                         //console.log('a',linkName)
                                         clearInterval(interval)
                                         appear() // re-run
