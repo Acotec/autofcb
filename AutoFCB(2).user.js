@@ -46,9 +46,6 @@
         var AutoUpdateB = document.createElement("button"),
             AutoUpdate = document.getElementsByClassName('col item')[2].getElementsByClassName('content-box')[0];
         AutoUpdate.appendChild(AutoUpdateB);
-        if (GM_getValue("AutoUpdate", false) == false) {
-            GM_setValue("AutoUpdate", true)
-        }
         try {
             if (GM_getValue("AutoUpdate", true)) {
                 AutoUpdateB.innerHTML = 'AutoUpdate_ON';
@@ -92,9 +89,6 @@
         let staticB = document.createElement("button"),
             static = document.getElementsByClassName('col item')[0].getElementsByClassName('content-box')[0];
         static.appendChild(staticB);
-        if (GM_getValue("static", false) == false) {
-            GM_setValue("static", true)
-        }
         try {
             if (GM_getValue("static", true)) {
                 staticB.innerHTML = 'Static_ON';
@@ -407,13 +401,13 @@
                                         hour12: true
                                     }).replace(/\s+/ig, '')
                                     if (/(12|0[0-8]|[1-8])am/ig.test(time)) {
-                                        duration = 1 * 1000
+                                        duration = 2 * 1000
                                     } //time is around 12am-8am
                                     else if (/(9|1[0-1])am/ig.test(time)) {
                                         duration = 5 * 1000
                                     } //time is around 9am-11am
                                     else if (/(12|(0|1[0-9]|[1-9]))pm/ig.test(time)) {
-                                        duration = 10 * 1000
+                                        duration = 7 * 1000
                                     } //time is around 12pm-11pm
                                     else {
                                         duration = 5 * 1000
