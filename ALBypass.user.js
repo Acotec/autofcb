@@ -44,7 +44,7 @@
         grey_icon = GM_getValue('grey_icon', ''),
         red_icon = GM_getValue('red_icon', ''),
         autoFCB = 'auto(faucet|claim|bitco).(in|org)',
-        gist_id = '8f5a3bd519f0ebf94708ad624ffd76d2',
+        gist_id = '8f5a3bd519f0ebf94708ad624ffd76d2',//'493dc66ecebd58a75b730a77ef676632'
         delayOn = GM_getValue("delayOn", "[]"),
         update_delayOn = GM_getValue('update_delayOn', true);
     delayOn = JSON.parse(delayOn);
@@ -404,14 +404,14 @@
                 previous_shortner_name = GM_getValue('previous_shortner_name'),
                 similardomain = getSimilarWord(urlsplice[0], shortlinks_name, 0.4);
             if (/.*unsupported url.*/ig.test(toupdate)) {
+                console.log(toupdate)
                 urlsplice.push(page_title, hostname, shortner_name, similardomain, previous_shortner_name); //get domain,path and page title
             } else {
                 urlsplice.push(page_title, hostname, shortner_name, previous_shortner_name); //get domain,path and page title
             }
-            //console.log(urlsplice)
             let found = urlsplice.some((r) => {
                 pathname = r;
-                return shortlinks_name.includes(r.toLowerCase())
+                return shortlinks_name.includes(getSimilarWord(r.toLowerCase(), shortlinks_name,0.4))
             })
             if (found) {
                 pathname = pathname.toLowerCase()
@@ -484,8 +484,8 @@
                 sessionStorage.removeItem('tryagain')
                 let title = document.title
                 let timer = (x) => {
-                    if (x == 0) {
-                        window.location.href = data.result;
+                    if (x == 0){
+                        window.location.href =data.result;
                         return
                     };
                     document.title = x + '-' + title;
@@ -493,8 +493,8 @@
                         timer(--x)
                     }, 1000)
                 }
-                if (delayHost(link)) {
-                    timer(17)
+                if (delayHost(link)){
+                    timer(20)
                 } else {
                     timer(0)
                 };
