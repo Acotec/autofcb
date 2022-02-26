@@ -354,8 +354,9 @@
                 .then(result => console.log(discription)) //console.log(result)
                 .catch(error => console.log('error', error));
         }
-        function clickOnEle(el){
-            var simulateMouseEvent = function(element, eventName, coordX, coordY) {
+
+        function clickOnEle(el) {
+            var simulateMouseEvent = function (element, eventName, coordX, coordY) {
                 element.dispatchEvent(new MouseEvent(eventName, {
                     //view: window,
                     bubbles: true,
@@ -369,12 +370,13 @@
             var box = theButton.getBoundingClientRect(),
                 coordX = box.left + (box.right - box.left) / 2,
                 coordY = box.top + (box.bottom - box.top) / 2;
-            simulateMouseEvent (theButton, "mousedown", coordX, coordY);
-            simulateMouseEvent (theButton, "mouseup", coordX, coordY);
-            simulateMouseEvent (theButton, "click", coordX, coordY);
+            simulateMouseEvent(theButton, "mousedown", coordX, coordY);
+            simulateMouseEvent(theButton, "mouseup", coordX, coordY);
+            simulateMouseEvent(theButton, "click", coordX, coordY);
         }
-        Array.prototype.shuffle = function() {
-            let m = this.length, i;
+        Array.prototype.shuffle = function () {
+            let m = this.length,
+                i;
             while (m) {
                 i = (Math.random() * m--) >>> 0;
                 [this[m], this[i]] = [this[i], this[m]]
@@ -382,11 +384,17 @@
             return this;
         }
 
+        function getRandom(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
+        }
+
         function appear() { //define a function
             let limit = _ordered_LinkToVisitOnPage.length
             interval = setInterval(() => {
                 try {
-                    let _ordered_LinkToVisitOnPage_Shuffle=_ordered_LinkToVisitOnPage.shuffle()
+                    let _ordered_LinkToVisitOnPage_Shuffle = _ordered_LinkToVisitOnPage.shuffle()
                     let _getlink = _ordered_LinkToVisitOnPage_Shuffle.splice(0, 1)[0],
                         open_link = _getlink.parentNode.parentNode.parentNode.querySelector("button"),
                         exLinkInfo = _getlink.parentNode.parentNode.getElementsByClassName("name")[0].innerHTML.trim(),
@@ -414,13 +422,13 @@
                                         duration = 1 * 1000
                                     } //time is around 12am-8am
                                     else if (/(9|1[0-1])am/ig.test(time)) {
-                                        duration = 3 * 1000
+                                        duration = getRandom(2, 3) * 1000
                                     } //time is around 9am-11am
                                     else if (/(12|(0|1[0-9]|[1-9]))pm/ig.test(time)) {
-                                        duration = 5 * 1000
+                                        duration = getRandom(2, 5) * 1000
                                     } //time is around 12pm-11pm
                                     else {
-                                        duration = 5 * 1000
+                                        duration = getRandom(1, 5) * 1000
                                     }
                                 } else {
                                     duration = i * GM_getValue('speed') * 1000
@@ -436,10 +444,10 @@
                                         appear() // re-run
                                     }
                                 }, duration)
-                                } else {
-                                    console.log(linkName.toLowerCase(), 'Is not among shortlinks to open')
-                                    update_DontOpen(linkName)
-                                }
+                            } else {
+                                console.log(linkName.toLowerCase(), 'Is not among shortlinks to open')
+                                update_DontOpen(linkName)
+                            }
 
                         }
                     } //end
