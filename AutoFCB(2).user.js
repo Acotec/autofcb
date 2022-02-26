@@ -373,11 +373,21 @@
             simulateMouseEvent (theButton, "mouseup", coordX, coordY);
             simulateMouseEvent (theButton, "click", coordX, coordY);
         }
+        Array.prototype.shuffle = function() {
+            let m = this.length, i;
+            while (m) {
+                i = (Math.random() * m--) >>> 0;
+                [this[m], this[i]] = [this[i], this[m]]
+            }
+            return this;
+        }
+
         function appear() { //define a function
             let limit = _ordered_LinkToVisitOnPage.length
             interval = setInterval(() => {
                 try {
-                    let _getlink = _ordered_LinkToVisitOnPage.splice(0, 1)[0],
+                    let _ordered_LinkToVisitOnPage_Shuffle=_ordered_LinkToVisitOnPage.shuffle()
+                    let _getlink = _ordered_LinkToVisitOnPage_Shuffle.splice(0, 1)[0],
                         open_link = _getlink.parentNode.parentNode.parentNode.querySelector("button"),
                         exLinkInfo = _getlink.parentNode.parentNode.getElementsByClassName("name")[0].innerHTML.trim(),
                         linkName = exLinkInfo.replace(/(<|\s).*/, '') //exLinkInfo.replace(exLinkInfo.match(/\s*\d* .*/), "");
