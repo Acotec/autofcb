@@ -667,13 +667,17 @@
     } else {
         favicon(grey_icon)
         let link = window.location.href
-        if (GM_getValue('updateAcceptDomain', true) == true) {
+        if(/app.joinsurf.com.+login.+email/ig.test(link)){
+            null
+        }
+        else if (GM_getValue('updateAcceptDomain', true) == true) {
             updateAcceptDomain();
             GM_setValue('updateAcceptDomain', false);
             setTimeout(() => {
                 window.close()
             }, 3000)
-        } else if (GM_getValue('updateAcceptDomain') == false) {
+        }
+        else if (GM_getValue('updateAcceptDomain') == false) {
             getDomainOrPathNameAndUpdate(link, 'unsupported url');
             GM_setValue('updateAcceptDomain', true)
         }
