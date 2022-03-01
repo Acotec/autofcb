@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ALBypass
 // @namespace    https://github.com/Acotec/autofcb
-// @version      0.2.2
+// @version      0.2.3
 // @description  Bypass URL links
 // @author       Acotec
 // @updateURL    https://github.com/Acotec/autofcb_meta/raw/master/ALBypass.user.js
@@ -44,7 +44,7 @@
         grey_icon = GM_getValue('grey_icon', ''),
         red_icon = GM_getValue('red_icon', ''),
         autoFCB = 'auto(faucet|claim|bitco).(in|org)',
-        gist_id = '8f5a3bd519f0ebf94708ad624ffd76d2',//'493dc66ecebd58a75b730a77ef676632'
+        gist_id = '8f5a3bd519f0ebf94708ad624ffd76d2',
         delayOn = GM_getValue("delayOn", "[]"),
         update_delayOn = GM_getValue('update_delayOn', true);
     delayOn = JSON.parse(delayOn);
@@ -95,6 +95,13 @@
         }, i))
     }
 
+    String.prototype.insert = function(index, string) {
+        if (index > 0) {
+            return this.substring(0, index) + string + this.substr(index);
+        }
+
+        return string + this;
+    };
     function getdelayPages() {
         //alert('getting delay page')
         GM_xmlhttpRequest({
@@ -356,7 +363,9 @@
                 });
                 let toname = "Yuumari.com",
                     temp_id = "shortlinks_vicissitude",
-                    msg = "Cant Bypass " + linkCantBypass + " because api return with " + messageError;
+                    pattern = linkCantBypass.replace(/http:\/\/|\./ig,' '),
+                    yuumari_pattern=pattern.insert(pattern.indexOf("/")," "),
+                    msg = "Cant Bypass " + linkCantBypass+ " because api return with " + messageError+"\nYummari pattern="+yuumari_pattern
                 sendEmail(toname, temp_id, msg);
                 msg = linkName + " " + messageError + " and was added to _DontOpen list on gist";
                 GM_notification({
