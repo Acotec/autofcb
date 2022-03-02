@@ -519,7 +519,9 @@
                     }, 1000)
                 }
                 if (delayHost(link)){
-                    timer(20)
+                    let randInt=(min,max)=>{return Math.floor(Math.random() * (max - min + 1) ) + min;}
+                    let duration= randInt(20,25)
+                    timer(duration)
                 } else {
                     timer(0)
                 };
