@@ -282,39 +282,55 @@
     }
 
     function sendEmail(toname, temp_id, msg) {
-        const username = "Harfho",
-              from_name = "Harfho",
-              to_name = toname,
-              message = msg,
-              accessToken = atob("NDFjYWY3YmU4MWMwMmRiODIwOWQwNGE2Njg4YWVhZWE="),
-              myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        var raw = JSON.stringify({
-            "user_id": "user_oF6Z1O2ypLkxsb5eCKwxN",
-            "service_id": "gmail",
-            "accessToken": accessToken,
-            "template_id": temp_id,
-            "template_params": {
-                "username": username,
-                "from_name": from_name,
-                "to_name": to_name,
-                "message": message
-            }
-        });
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
-        fetch("https://api.emailjs.com/api/v1.0/email/send", requestOptions)
-            .then(response => response.text())
-            .then((result) => {
-            console.log(result);
-            window.close()
-        })
-            .catch(error => console.log('error', error));
-    }
+        let site = new URL(linkCantBypass).host
+        GM_setValue('just_sent_msg_abt',site)
+        if(GM_getValue('just_sent_msg_abt')==GM_getValue('previous_sent_msg_abt')){
+            msg = "Already send issues about "+site+" to "+toname
+            GM_notification({
+                title: '!Bypass-- ' + linkCantBypass,
+                text: msg,
+                timeout: 5000,
+                ondone: () => {},
+            });
+        }else{
+            GM_setValue('previous_sent_msg_abt',site)
+            send()
+        }
+        let send = (toname, temp_id, msg)=>{
+            const username = "Harfho",
+                  from_name = "Harfho",
+                  to_name = toname,
+                  message = msg,
+                  accessToken = atob("NDFjYWY3YmU4MWMwMmRiODIwOWQwNGE2Njg4YWVhZWE="),
+                  myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            var raw = JSON.stringify({
+                "user_id": "user_oF6Z1O2ypLkxsb5eCKwxN",
+                "service_id": "gmail",
+                "accessToken": accessToken,
+                "template_id": temp_id,
+                "template_params": {
+                    "username": username,
+                    "from_name": from_name,
+                    "to_name": to_name,
+                    "message": message
+                }
+            });
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+            fetch("https://api.emailjs.com/api/v1.0/email/send", requestOptions)
+                .then(response => response.text())
+                .then((result) => {
+                console.log(result);
+                window.close()
+            })
+                .catch(error => console.log('error', error));
+        }
+        }
 
     function update_DontOpen(linkName) {
         GM_xmlhttpRequest({
@@ -363,7 +379,7 @@
                 });
                 let toname = "Yuumari.com",
                     temp_id = "shortlinks_vicissitude",
-                    pattern = linkCantBypass.replace(/http:\/\/|\./ig,' '),
+                    pattern = linkCantBypass.replace(/http.*:\/\/|\./ig,' '),
                     yuumari_pattern=pattern.insert(pattern.indexOf("/")," "),
                     msg = "Cant Bypass " + linkCantBypass+ " because api return with " + messageError+"\nYummari pattern="+yuumari_pattern
                 sendEmail(toname, temp_id, msg);
