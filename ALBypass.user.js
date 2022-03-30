@@ -282,56 +282,38 @@
     }
 
     function sendEmail(toname, temp_id, msg) {
-        let site = new URL(linkCantBypass).host
-        GM_setValue('just_sent_msg_abt',site)
-        if(GM_getValue('just_sent_msg_abt')==GM_getValue('previous_sent_msg_abt')){
-            msg = "Already send issues about "+site+" to "+toname
-            GM_notification({
-                title: '!Bypass-- ' + linkCantBypass,
-                text: msg,
-                timeout: 5000,
-                ondone: () => {},
-            });
-        }else{
-            GM_setValue('previous_sent_msg_abt',site)
-            send()
-        }
-        let send = (toname, temp_id, msg)=>{
-            const username = "Harfho",
-                  from_name = "Harfho",
-                  to_name = toname,
-                  message = msg,
-                  accessToken = atob("NDFjYWY3YmU4MWMwMmRiODIwOWQwNGE2Njg4YWVhZWE="),
-                  myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-            var raw = JSON.stringify({
-                "user_id": "user_oF6Z1O2ypLkxsb5eCKwxN",
-                "service_id": "gmail",
-                "accessToken": accessToken,
-                "template_id": temp_id,
-                "template_params": {
-                    "username": username,
-                    "from_name": from_name,
-                    "to_name": to_name,
-                    "message": message
-                }
-            });
-            var requestOptions = {
-                method: 'POST',
-                headers: myHeaders,
-                body: raw,
-                redirect: 'follow'
-            };
-            fetch("https://api.emailjs.com/api/v1.0/email/send", requestOptions)
-                .then(response => response.text())
-                .then((result) => {
-                console.log(result);
-                window.close()
-            })
-                .catch(error => console.log('error', error));
-        }
-        }
-
+        const username = "Harfho",
+              from_name = "Harfho",
+              to_name = toname,
+              message = msg,
+              accessToken = atob("NDFjYWY3YmU4MWMwMmRiODIwOWQwNGE2Njg4YWVhZWE="),
+              myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        var raw = JSON.stringify({
+            "user_id": "user_oF6Z1O2ypLkxsb5eCKwxN",
+            "service_id": "gmail",
+            "accessToken": accessToken,
+            "template_id": temp_id,
+            "template_params": {
+                "username": username,
+                "from_name": from_name,
+                "to_name": to_name,
+                "message": message
+            }
+        });
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+        fetch("https://api.emailjs.com/api/v1.0/email/send", requestOptions)
+            .then(response => response.text())
+            .then((result) => {
+            console.log(result);
+        })
+            .catch(error => console.log('error', error));
+    }
     function update_DontOpen(linkName) {
         GM_xmlhttpRequest({
             method: 'GET',
@@ -372,7 +354,7 @@
                     .then(response => response.text())
                     .then((result) => {
                     console.log('Done', _DontOpen);
-                    window.close()
+                    //window.close()
                 }) //console.log(result)
                     .catch((error) => {
                     console.log('error', error);
@@ -390,6 +372,9 @@
                     timeout: 10000,
                     ondone: () => {},
                 });
+                setTimeout(() => {
+                    window.close()
+                }, 5000)
             } else {
                 let msg = linkName + " is Already added to _DontOpen because api return with " + messageError;
                 GM_notification({
@@ -625,6 +610,22 @@
         });
     }
 
+    function quick_bypass(link){
+        let title = new URL(link).host
+        let timer = (x) => {
+            if (x == 0){
+                window.location.href=link;
+                return
+            };
+            document.title = x +'--'+ title;
+            return setTimeout(() => {
+                timer(--x)
+            }, 1000)
+        }
+        let randInt=(min,max)=>{return Math.floor(Math.random() * (max - min + 1) ) + min;}
+        let duration= randInt(20,25)
+        timer(duration)
+    }
     //main
     GM_registerMenuCommand("OnPhone-" + GM_getValue('OnPhone', false), OnPhone, "OnPhone");
     GM_registerMenuCommand("AllowToSendEmail-" + GM_getValue('AllowToSendEmail', false), AllowToSendEmail, "AllowToSendEmail");
@@ -647,11 +648,16 @@
         document.title = new URL(link).host
         bypass(link)
     } else if (/\/===$/.test(window.location.href)) {
-        if (/megaurl.in\/bypass=/.test(window.location.href)) {
+        if(/megaurl.in\/delay=/.test(window.location.href)){
+            let link = window.location.pathname.replace(/.*delay=/, '').replace(/\/===/ig, ''); //get the exact link to quick_bypass
+            quick_bypass(link)
+        }
+        else if (/megaurl.in\/bypass=/.test(window.location.href)) {
             let link = window.location.pathname.replace(/.*bypass=/, '').replace(/\/===/ig, ''); //get the exact link to pass to bypasser
             document.title = new URL(link).host;
             bypass(link)
-        } else {
+        }
+        else {
             let link = window.location.href.replace(/\/===/ig, '');
             bypass(link)
         }
