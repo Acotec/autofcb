@@ -110,7 +110,7 @@
         //alert('getting delay page')
         GM_xmlhttpRequest({
             method: 'GET',
-            url: "https://gist.github.com/Harfho/" + gist_id + "/raw/delaypage.txt?timestamp=' + (+new Date())",
+            url: "https://gist.github.com/Harfho/" + gist_id + "/raw/delaypage.txt?timestamp="+ (+new Date()),
             revalidate: false,
             nocache: true,
             onload: (r) => {
@@ -333,7 +333,7 @@
     function update_DontOpen(linkName) {
         GM_xmlhttpRequest({
             method: 'GET',
-            url: "https://gist.github.com/Harfho/" + gist_id + "/raw/_DontOpen.txt?timestamp=' "+ (+new Date()),
+            url: "https://gist.github.com/Harfho/" + gist_id + "/raw/_DontOpen.txt?timestamp="+ (+new Date()),
             revalidate: false,
             nocache: true,
             onload: getDontOpen
@@ -398,7 +398,7 @@
     function getDomainOrPathNameAndUpdate(link, toupdate) { //toupdate=(dontopen,delaypage,unsupported url)
         GM_xmlhttpRequest({
             method: 'GET',
-            url: "https://gist.github.com/Harfho/" + gist_id + "/raw/shortlinks_name.txt?timestamp=' "+ (+new Date()),
+            url: "https://gist.github.com/Harfho/" + gist_id + "/raw/shortlinks_name.txt?timestamp="+ (+new Date()),
             revalidate: false,
             nocache: true,
             onload: get_Shortlinks
@@ -433,7 +433,7 @@
             console.log(found)
             var getfound = null
             found.find((i) => {
-                let f = getSimilarWord(i.toLowerCase(), shortlinks_name)
+                let f = getSimilarWord(i.toLowerCase(), shortlinks_name,0.4)
                 getfound = f
                 console.log(f)
                 return shortlinks_name.includes(f)
@@ -442,10 +442,12 @@
                 pathname = getfound
                 if (/.*dontopen.*/ig.test(toupdate)) {
                     pathname = getSimilarWord(pathname, shortlinks_name)
+                    alert(pathname)
                     update_DontOpen(pathname)
                 } else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(pathname)) {
                     messageError = toupdate + "\nor\nshortlink url was changed";
                     linkCantBypass = link
+                    alert(pathname)
                     update_DontOpen(pathname)
                 }
             } else {
