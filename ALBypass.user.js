@@ -442,12 +442,10 @@
                 pathname = getfound
                 if (/.*dontopen.*/ig.test(toupdate)) {
                     pathname = getSimilarWord(pathname, shortlinks_name)
-                    alert(pathname)
                     update_DontOpen(pathname)
                 } else if (/.*unsupported url.*/ig.test(toupdate) && shortlinks_name.includes(pathname)) {
                     messageError = toupdate + "\nor\nshortlink url was changed";
                     linkCantBypass = link
-                    alert(pathname)
                     update_DontOpen(pathname)
                 }
             } else {
