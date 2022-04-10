@@ -374,15 +374,14 @@
                         temp_id = "shortlinks_vicissitude",
                         pattern = linkCantBypass.replace(/http.*:\/\/|\./ig,' '),
                         yuumari_pattern=pattern.insert(pattern.indexOf("/")," "),
-                        msg = "Cant Bypass " + linkCantBypass+ " because api return with " + messageError+"\nYummari pattern="+yuumari_pattern
-                    msg = linkName + " " + messageError + " and was added to _DontOpen list on gist";
+                        msg = "Cant Bypass \nURL-"+linkCantBypass+"\nSNAME-"+linkName+ "\nbecause api return with " + messageError+"\nYummari pattern="+yuumari_pattern;
                     sendEmail(toname, temp_id, msg);
                 }) //console.log(result)
                     .catch((error) => {
                     console.log('error', error);
                 });
             } else {
-                let msg = linkName + " is Already added to _DontOpen because api return with " + messageError;
+                let msg = "SNAME-"+linkName+"\nURL-"+linkCantBypass+"\nis Already added to _DontOpen because api return with " + messageError;
                 GM_notification({
                     title: '!Bypass-- ' + linkCantBypass,
                     text: msg,
@@ -433,7 +432,8 @@
             console.log(found)
             var getfound = null
             found.find((i) => {
-                let f = getSimilarWord(i.toLowerCase(), shortlinks_name,0.4)
+                Array.prototype.sample = function(){return this[Math.floor(Math.random()*this.length)];}
+                let f = getSimilarWord(i.toLowerCase(),shortlinks_name,[0.3,0.4].sample())
                 getfound = f
                 console.log(f)
                 return shortlinks_name.includes(f)
@@ -521,7 +521,7 @@
                 }
                 if (delayHost(link)){
                     let randInt=(min,max)=>{return Math.floor(Math.random() * (max - min + 1) ) + min;}
-                    let duration= randInt(20,25)
+                    let duration= randInt(25,26)
                     timer(duration)
                 } else {
                     timer(0)
@@ -677,7 +677,8 @@
             let link = window.location.href.replace(/\/===/ig, '');
             bypass(link)
         }
-    } else if (new RegExp(autoFCB + '/dashboard$', 'ig').test(window.location.href)) {
+    }
+    else if (new RegExp(autoFCB + '/dashboard$', 'ig').test(window.location.href)) {
         localStorage.removeItem("close");
         localStorage.clear();
     } else if (new RegExp(autoFCB + '/dashboard/shortlinks$', 'ig').test(window.location.href)) {
